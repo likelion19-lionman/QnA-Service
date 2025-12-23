@@ -11,8 +11,9 @@ public record UserRequestDto(
 
         @Min(value = 8,
                 message = "비밀번호는 최소 8자 이상입니다.")
-        @Pattern(regexp = "^(?=.*[^a-zA-Z0-9]).{8,}$",
-                message = "비밀번호 형식이 올바르지 않습니다.")
+        @Pattern(
+                regexp = "^(?=.*[!@#$%^&*()_+\\-={}\\[\\]:;\"'<>,.?/]).{8,}$",
+                message = "비밀번호는 특수문자를 최소 1개 포함해야 합니다.")
         String password,
 
         @Email(message = "이메일 형태가 올바르지 않습니다.")
