@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -21,6 +22,7 @@ public class AuthController {
 
     @GetMapping("/check-duplication")
     public ResponseEntity<Boolean> checkDuplication(String username) {
+
         boolean checked = userService.checkDuplication(username);
 
         if (!checked) {
@@ -31,16 +33,26 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody UserRequestDto requestDto,
-                                         HttpServletResponse response) throws IOException {
+    public ResponseEntity<?> register(@RequestBody UserRequestDto requestDto,
+                                      HttpServletResponse response,
+                                      BindingResult bindingResult) throws IOException {
+
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+        }
+
         User user = userService.register(requestDto);
         response.sendRedirect("/auth/login");
+        // FIXME: 로그인 메서드와 결합하여 로그인 화면으로 넘어갈 수 있는지 확인
         return ResponseEntity.status(201).body(user);
     }
 
+
     @GetMapping("/email/{email}")
     public ResponseEntity<String> requestAuthCode(@PathVariable String email) throws MessagingException {
+
         boolean isSend = userService.sendAuthCode(email);
+
         return isSend ?
                 ResponseEntity.ok("인증코드가 전송되었습니다.") :
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("인증 코드 전송이 실패하였습니다.");
@@ -49,7 +61,9 @@ public class AuthController {
     @PostMapping("/email")
     public ResponseEntity<String> validateAuthCode(@RequestParam(name = "email") String email,
                                                    @RequestParam(name = "auth") String authCode) {
+
         boolean isSuccess = userService.validationAuthCode(email, authCode);
+
         return isSuccess ?
                 ResponseEntity.ok("이메일 인증에 성공하였습니다.") :
                 ResponseEntity.badRequest().body("이메일 인증에 실패하였습니다.");

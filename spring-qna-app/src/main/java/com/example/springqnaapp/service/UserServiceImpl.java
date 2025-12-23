@@ -33,9 +33,9 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User register(UserRequestDto requestDto) {
         User user = User.builder()
-                .username(requestDto.getUsername())
-                .password(passwordEncoder.encode(requestDto.getPassword()))
-                .email(requestDto.getEmail())
+                .username(requestDto.username())
+                .password(passwordEncoder.encode(requestDto.password()))
+                .email(requestDto.email())
                 .build();
 
         return userRepository.save(user);
