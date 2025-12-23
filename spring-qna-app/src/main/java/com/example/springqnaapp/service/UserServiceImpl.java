@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
 
     // 이메일과 인증코드 검증
     @Override
-    public boolean validationAuthCode(String email, String authCode) {
+    public boolean validateAuthCode(String email, String authCode) {
         Auth auth = authRepository.findByEmail(email);
         if (auth != null && auth.getAuthCode().equals(authCode)) {
             authRepository.delete(auth);

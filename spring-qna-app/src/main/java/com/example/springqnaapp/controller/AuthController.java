@@ -62,7 +62,7 @@ public class AuthController {
     public ResponseEntity<String> validateAuthCode(@RequestParam(name = "email") String email,
                                                    @RequestParam(name = "auth") String authCode) {
 
-        boolean isSuccess = userService.validationAuthCode(email, authCode);
+        boolean isSuccess = userService.validateAuthCode(email, authCode);
 
         return isSuccess ?
                 ResponseEntity.ok("이메일 인증에 성공하였습니다.") :

@@ -12,5 +12,5 @@ public interface UserService {
 
     boolean sendAuthCode(String email) throws MessagingException;
 
-    boolean validationAuthCode(String email, String authCode);
+    boolean validateAuthCode(String email, String authCode);
 }
