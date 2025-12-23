@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql-dev
+    environment:
+      MYSQL_DATABASE: testdb
+      MYSQL_USER: test
+      MYSQL_PASSWORD: 1234
+      MYSQL_ROOT_PASSWORD: 1234
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+      start_period: 5s
+
+  back:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: chatting-spring:1.0
+    container_name: back-dev
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env.dev
+    depends_on:
+      db:
+        condition: service_healthy
