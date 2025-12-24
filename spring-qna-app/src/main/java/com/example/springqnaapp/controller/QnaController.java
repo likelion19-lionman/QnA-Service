@@ -22,9 +22,11 @@ public class QnaController {
     private final QnaService qnaService;
 
     @PostMapping
-    public ResponseEntity<?> query(@Valid QnaRequestDto requestDto,
-                                   Principal principal,
-                                   BindingResult bindingResult) {
+    public ResponseEntity<?> query(
+            @Valid @RequestBody QnaRequestDto requestDto,
+            Principal principal,
+            BindingResult bindingResult
+    ) {
 
         // 제목 혹은 내용이 비어있을 경우 오류 출력
         if (bindingResult.hasErrors()) {
@@ -37,15 +39,17 @@ public class QnaController {
     }
 
     @GetMapping
-    public ResponseEntity<?> retrieveQnas(@RequestParam(defaultValue = "0")
-                                          @Min(value = 0, message = "페이지는 0 이상 값이어야 합니다.")
-                                          Integer page,
+    public ResponseEntity<?> retrieveQnas(
+            @RequestParam(defaultValue = "0")
+            @Min(value = 0, message = "페이지는 0 이상 값이어야 합니다.")
+            Integer page,
 
-                                          @RequestParam(defaultValue = "10")
-                                          @Min(value = 1, message = "사이즈는 1 이상 값이어야 합니다.")
-                                          Integer size,
+            @RequestParam(defaultValue = "10")
+            @Min(value = 1, message = "사이즈는 1 이상 값이어야 합니다.")
+            Integer size,
 
-                                          Principal principal) {
+            Principal principal
+    ) {
 
         String username = principal.getName();
         Page<QnaResponseDto> qnaPage = qnaService.retrieveQnaPage(page, size, username);
@@ -53,8 +57,10 @@ public class QnaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> retrieveQna(@PathVariable(value = "id") Long qnaId,
-                                         Principal principal) {
+    public ResponseEntity<?> retrieveQna(
+            @PathVariable(value = "id") Long qnaId,
+            Principal principal
+    ) {
 
         String username = principal.getName();
         QnaResponseDto response = qnaService.retrieveQna(qnaId, username);
@@ -65,8 +71,10 @@ public class QnaController {
 //    @PostMapping("/{id}")
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteQna(@PathVariable("id") Long qnaId,
-                                       Principal principal) {
+    public ResponseEntity<?> deleteQna(
+            @PathVariable("id") Long qnaId,
+            Principal principal
+    ) {
 
         // qnaId 값이 null로 들어올 경우 삭제되는 값이 없도록 설정
         if (qnaId == null) {

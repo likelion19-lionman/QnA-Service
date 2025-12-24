@@ -9,8 +9,10 @@ import java.util.List;
 
 @JsonPropertyOrder({"title", "comments"}) // 응답 순서 정렬
 @Builder
-public record QnaResponseDto(String title,
-                             List<Comment> comments) {
+public record QnaResponseDto(
+        String title,
+        List<Comment> comments
+) {
 
     public static QnaResponseDto from(Qna qna) {
         return QnaResponseDto.builder()
