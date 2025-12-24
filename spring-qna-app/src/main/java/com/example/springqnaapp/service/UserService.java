@@ -2,9 +2,17 @@ package com.example.springqnaapp.service;
 
 import com.example.springqnaapp.common.dto.LoginResponseDto;
 import com.example.springqnaapp.domain.User;
+import com.example.springqnaapp.dto.UserRequestDto;
+import jakarta.mail.MessagingException;
 
 public interface UserService {
-	boolean checkedDuplication(String username);
-	User register(String username, String password);
-	LoginResponseDto login(String username, String password);
+    boolean checkDuplication(String username);
+
+    User register(UserRequestDto requestDto);
+
+    boolean sendAuthCode(String email) throws MessagingException;
+
+    boolean validateAuthCode(String email, String authCode);
+    
+    LoginResponseDto login(String username, String password);
 }
