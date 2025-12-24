@@ -1,17 +1,24 @@
 package com.example.springqnaapp.service.impl;
 
 import com.example.springqnaapp.common.dto.LoginResponseDto;
+import com.example.springqnaapp.common.dto.UserRequestDto;
 import com.example.springqnaapp.common.util.JwtTokenizer;
+import com.example.springqnaapp.domain.Auth;
 import com.example.springqnaapp.domain.RefreshToken;
 import com.example.springqnaapp.domain.User;
+import com.example.springqnaapp.repository.AuthRepository;
 import com.example.springqnaapp.repository.RefreshTokenRepository;
 import com.example.springqnaapp.repository.UserRepository;
+import com.example.springqnaapp.service.MailService;
 import com.example.springqnaapp.service.UserService;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,15 +27,53 @@ public class UserServiceImpl implements UserService {
 	private final RefreshTokenRepository refreshTokenRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtTokenizer jwtTokenizer;
+	private final AuthRepository authRepository;
+	private final MailService mailService;
 
 	@Override
-	public boolean checkedDuplication(String username) {
-		return false;
+	@Transactional(readOnly = true)
+	public boolean checkDuplication(String username) {
+		Optional<User> byUsername = userRepository.findByUsername(username);
+		return byUsername.isEmpty();
 	}
 
 	@Override
-	public User register(String username, String password) {
-		return null;
+	@Transactional
+	public User register(UserRequestDto requestDto) {
+		User user = User.builder()
+		                .username(requestDto.username())
+		                .password(passwordEncoder.encode(requestDto.password()))
+		                .email(requestDto.email())
+		                .build();
+
+		return userRepository.save(user);
+	}
+
+	@Override
+	@Transactional
+	public boolean sendAuthCode(String email) throws MessagingException {
+		String authCode = mailService.sendSimpleMessage(email);
+		if (authCode != null) {
+			Auth auth = authRepository.findByEmail(email);
+			if (auth == null) {
+				authRepository.save(new Auth(email, authCode));
+			} else {
+				auth.patch(authCode);
+			}
+			return true;
+		}
+		return false;
+	}
+
+	// 이메일과 인증코드 검증
+	@Override
+	public boolean validateAuthCode(String email, String authCode) {
+		Auth auth = authRepository.findByEmail(email);
+		if (auth != null && auth.getAuthCode().equals(authCode)) {
+			authRepository.delete(auth);
+			return true;
+		}
+		return false;
 	}
 
 	@Override

@@ -1,5 +1,6 @@
-package com.example.springqnaapp.service;
+package com.example.springqnaapp.service.impl;
 
+import com.example.springqnaapp.service.MailService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;

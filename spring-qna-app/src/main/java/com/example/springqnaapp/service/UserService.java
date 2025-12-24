@@ -2,7 +2,7 @@ package com.example.springqnaapp.service;
 
 import com.example.springqnaapp.common.dto.LoginResponseDto;
 import com.example.springqnaapp.domain.User;
-import com.example.springqnaapp.dto.UserRequestDto;
+import com.example.springqnaapp.common.dto.UserRequestDto;
 import jakarta.mail.MessagingException;
 
 public interface UserService {
