@@ -1,4 +1,4 @@
-package com.example.springqnaapp.security;
+package com.example.springqnaapp.security.jwt;
 
 import lombok.Getter;
 

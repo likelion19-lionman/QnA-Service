@@ -1,4 +1,4 @@
-package com.example.springqnaapp.security;
+package com.example.springqnaapp.security.jwt;
 
 import com.example.springqnaapp.common.util.JwtTokenizer;
 import io.jsonwebtoken.Claims;
@@ -26,7 +26,6 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
 	private final JwtTokenizer jwtTokenizer;
 
 	@Override
@@ -46,12 +45,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		try {
 			Claims claim = jwtTokenizer.parseAccessToken(accessToken);
 			List<GrantedAuthority> authorities = getAuthorities(claim);
-			CustomUserDetails userDetails = new CustomUserDetails(claim.get("username", String.class),
-			                                                      "",
-			                                                      authorities);
-			Authentication authentication = new JwtAuthentication(userDetails.getAuthorities(),
-			                                                      userDetails,
-			                                                      null);
+			Authentication authentication = new JwtAuthentication(
+					authorities,
+					claim.get("username", String.class),
+					null
+			);
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 		} catch (ExpiredJwtException e) {
 			request.setAttribute("error", JwtErrorCode.JWT_TOKEN_EXPIRED);

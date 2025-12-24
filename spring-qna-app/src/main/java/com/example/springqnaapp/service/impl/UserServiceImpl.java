@@ -8,7 +8,6 @@ import com.example.springqnaapp.repository.RefreshTokenRepository;
 import com.example.springqnaapp.repository.UserRepository;
 import com.example.springqnaapp.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

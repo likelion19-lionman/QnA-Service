@@ -1,8 +1,7 @@
 package com.example.springqnaapp.config;
 
-import com.example.springqnaapp.security.CustomAuthenticationEntryPoint;
-import com.example.springqnaapp.security.JwtAuthenticationFilter;
-import org.springframework.beans.factory.annotation.Value;
+import com.example.springqnaapp.security.jwt.JwtAuthenticationFilter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,28 +17,26 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
 @Configuration
+@Slf4j
 @EnableWebSecurity
 public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http,
-												   JwtAuthenticationFilter jwtAuthenticationFilter,
-	                                               CustomAuthenticationEntryPoint authenticationEntryPoint) {
+												   JwtAuthenticationFilter jwtAuthenticationFilter) {
 		return http.authorizeHttpRequests(auth -> auth
 				           .requestMatchers("/test/**").authenticated()
 				           .anyRequest().authenticated()
 		           )
+		           .httpBasic(AbstractHttpConfigurer::disable)
 		           .formLogin(AbstractHttpConfigurer::disable)
-		           .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+		           .addFilterAt(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 		           .csrf(AbstractHttpConfigurer::disable)
 		           .sessionManagement(session -> session
 				           .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 		           )
 		           .cors(cors -> cors
 				           .configurationSource(corsConfigurationSource())
-		           )
-		           .exceptionHandling(exception -> exception
-				           .authenticationEntryPoint(authenticationEntryPoint)
 		           )
 		           .build();
 	}
