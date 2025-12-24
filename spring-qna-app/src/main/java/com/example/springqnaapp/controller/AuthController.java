@@ -1,21 +1,29 @@
 package com.example.springqnaapp.controller;
 
 import com.example.springqnaapp.domain.User;
-import com.example.springqnaapp.dto.UserRequestDto;
+import com.example.springqnaapp.common.dto.LoginResponseDto;
+import com.example.springqnaapp.common.dto.UserRequestDto;
 import com.example.springqnaapp.service.UserService;
+import jakarta.validation.Valid;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     private final UserService userService;
@@ -67,5 +75,20 @@ public class AuthController {
         return isSuccess ?
                 ResponseEntity.ok("이메일 인증에 성공하였습니다.") :
                 ResponseEntity.badRequest().body("이메일 인증에 실패하였습니다.");
+    }
+  
+  	@PostMapping("/login")
+    public ResponseEntity<?> login(
+        @RequestBody @Valid UserRequestDto userRequestDto,
+        BindingResult bindingResult
+    ) {
+        if (bindingResult.hasErrors())
+            return ResponseEntity.badRequest()
+                                 .body(bindingResult.getAllErrors());
+
+        LoginResponseDto loginResponseDto = userService.login(userRequestDto.username(),
+                                                              userRequestDto.password());
+
+        return ResponseEntity.ok(loginResponseDto);
     }
 }

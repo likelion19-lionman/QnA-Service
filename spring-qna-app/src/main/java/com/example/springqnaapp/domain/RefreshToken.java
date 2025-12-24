@@ -9,13 +9,11 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Table(name = "refresh_token")
+@Table(name = "refresh_tokens")
 @NoArgsConstructor
 @AllArgsConstructor
-@Setter
 @Getter
 public class RefreshToken {
 
@@ -28,4 +26,9 @@ public class RefreshToken {
 
 	@Column(name = "value")
 	private String value;
+
+	public RefreshToken(Long userId, String value) {
+		this.userId = userId;
+		this.value = value;
+	}
 }
