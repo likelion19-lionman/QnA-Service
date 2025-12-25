@@ -1,0 +1,26 @@
+services:
+  db:
+    image: qna-mysql:8.0
+    env_file:
+      - .env.dev
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+      start_period: 5s
+
+  back:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: qna-spring:1.0
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env.dev
+    depends_on:
+      db:
+        condition: service_healthy
