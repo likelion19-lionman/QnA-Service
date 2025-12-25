@@ -1,14 +1,8 @@
-version: "3.8"
-
 services:
   db:
-    image: mysql:8.0
-    container_name: mysql-dev
-    environment:
-      MYSQL_DATABASE: testdb
-      MYSQL_USER: test
-      MYSQL_PASSWORD: 1234
-      MYSQL_ROOT_PASSWORD: 1234
+    image: qna-mysql:8.0
+    env_file:
+      - .env.dev
     ports:
       - "3306:3306"
     healthcheck:
@@ -22,8 +16,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    image: chatting-spring:1.0
-    container_name: back-dev
+    image: qna-spring:1.0
     ports:
       - "8080:8080"
     env_file:

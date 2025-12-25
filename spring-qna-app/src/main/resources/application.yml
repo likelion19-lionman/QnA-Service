@@ -1,5 +1,6 @@
 spring:
   application:
+<<<<<<< Updated upstream
     name: spring-qna-app
 
   datasource:
@@ -21,3 +22,6 @@ jwt:
   refresh-secret-key: abcdefghijklmnabcdefghijklmnabcdefghijklmnabcdefghijklmnabcdefghijklmnabcdefghijklmnabcde
   access-token-expiration: 1800000
   refresh-token-expiration: 60480000
+=======
+    name: spring-qna-app
+>>>>>>> Stashed changes
