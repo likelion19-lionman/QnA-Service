@@ -1,0 +1,10 @@
+services:
+  front:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: qna-next:1.0
+    env_file:
+      - .env.dev
+    ports:
+      - "3000:3000"
