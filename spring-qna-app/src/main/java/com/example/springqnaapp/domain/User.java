@@ -10,6 +10,7 @@ import java.util.List;
 
 @Table(name="users")
 @Entity
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
@@ -20,6 +21,9 @@ public class User {
 	@Column(length = 100, nullable = false, unique = true)
     @Getter
 	private String username;
+
+	@Column(nullable = false, unique = true)
+	private String email;
 
 	@Column(nullable = false)
 	private String password;
@@ -35,8 +39,9 @@ public class User {
     )
     private List<Qna> qnas = new ArrayList<>();
 
-	public User(String username, String password) {
+	public User(String username, String email, String password) {
 		this.username = username;
+		this.email = email;
 		this.password = password;
 	}
 
