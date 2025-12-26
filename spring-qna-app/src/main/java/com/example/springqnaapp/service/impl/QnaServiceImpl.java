@@ -87,13 +87,11 @@ public class QnaServiceImpl implements QnaService {
 		return comment;
 	}
 
-
 	@Override
 	@Transactional
 	public void delete(Long qnaId, String username) {
 		Qna qna = qnaRepository.findById(qnaId)
-		                       .orElseThrow(() ->
-				                                    new IllegalArgumentException("Can't find Qna"));
+		                       .orElseThrow(() -> new IllegalArgumentException("Can't find Qna"));
 
 		if (!qna.isWriter(username))
 			throw new RuntimeException("삭제 권한이 없습니다.");

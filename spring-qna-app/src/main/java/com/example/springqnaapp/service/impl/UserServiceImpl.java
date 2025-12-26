@@ -11,8 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -39,21 +37,24 @@ public class UserServiceImpl implements UserService {
 		if (!passwordEncoder.matches(password, user.getPassword()))
 			throw new IllegalArgumentException("존재하지 않는 회원입니다.");
 
+		var roles = user.getStringRoles();
+
 		String accessToken = jwtTokenizer.createAccessToken(
 				user.getUsername(),
 				user.getEmail(),
-				List.of("ROLE_USER"));
+				roles);
 
 		String refreshToken = jwtTokenizer.createRefreshToken(
 				user.getUsername(),
 				user.getEmail(),
-				List.of("ROLE_USER"));
+				roles);
 
-		refreshTokenRepository.save(
-				new RefreshToken(user.getId(), refreshToken));
+		refreshTokenRepository.save(new RefreshToken(user.getId(), refreshToken));
 
 		return new LoginResponseDto(
-				accessToken, refreshToken, user.getUsername()
+				accessToken,
+				refreshToken,
+				user.getUsername()
 		);
 	}
 }
