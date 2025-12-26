@@ -35,4 +35,8 @@ public class Comment {
     public Comment(String comment) {
         this.comment = comment;
     }
+
+	public User getUser() {
+		return null;
+	}
 }

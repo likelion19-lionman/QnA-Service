@@ -29,9 +29,8 @@ public class QnaController {
     ) {
 
         // 제목 혹은 내용이 비어있을 경우 오류 출력
-        if (bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors())
             return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
-        }
 
         String username = principal.getName();
         QnaResponseDto responseDto = qnaService.createQna(requestDto, username);
@@ -61,14 +60,22 @@ public class QnaController {
             @PathVariable(value = "id") Long qnaId,
             Principal principal
     ) {
-
         String username = principal.getName();
         QnaResponseDto response = qnaService.retrieveQna(qnaId, username);
-        return ResponseEntity.ok(response);
+	    return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // TODO: 질답
-//    @PostMapping("/{id}")
+    @PostMapping("/{id}")
+	public ResponseEntity<?> qna(
+			@PathVariable(value = "id") Long qnaId,
+			@RequestBody String comment,
+			Principal principal
+    ) {
+		String username = principal.getName();
+		String result = qnaService.qna(qnaId, comment, username);
+
+		return ResponseEntity.ok(result);
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteQna(
