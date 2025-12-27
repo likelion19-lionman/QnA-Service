@@ -26,57 +26,57 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-	private final JwtTokenizer jwtTokenizer;
+    private final JwtTokenizer jwtTokenizer;
 
-	@Override
-	protected void doFilterInternal(
-			HttpServletRequest request,
-			HttpServletResponse response,
-			FilterChain filterChain
-	) throws ServletException, IOException {
-		String authHeader = request.getHeader("Authorization");
+    @Override
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
+        String authHeader = request.getHeader("Authorization");
 
-		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-			filterChain.doFilter(request, response);
-			return;
-		}
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-		String accessToken = authHeader.substring("Bearer ".length());
-		try {
-			Claims claim = jwtTokenizer.parseAccessToken(accessToken);
-			List<GrantedAuthority> authorities = getAuthorities(claim);
-			Authentication authentication = new JwtAuthentication(
-					authorities,
-					claim.get("username", String.class),
-					null
-			);
-			SecurityContextHolder.getContext().setAuthentication(authentication);
-		} catch (ExpiredJwtException e) {
-			request.setAttribute("error", JwtErrorCode.JWT_TOKEN_EXPIRED);
-			throw new BadCredentialsException("Invalid token");
-		} catch (UnsupportedJwtException e) {
-			request.setAttribute("error", JwtErrorCode.JWT_UNSUPPORTED);
-			throw new BadCredentialsException("Invalid token");
-		} catch (MalformedJwtException e) {
-			request.setAttribute("error", JwtErrorCode.JWT_MALFORMED);
-			throw new BadCredentialsException("Invalid token");
-		} catch (PrematureJwtException e) {
-			request.setAttribute("error", JwtErrorCode.JWT_NOT_YET_VALID);
-			throw new BadCredentialsException("Invalid token");
-		} catch (IllegalArgumentException e) {
-			request.setAttribute("error", JwtErrorCode.JWT_ILLEGAL_ARGUMENT);
-			throw new BadCredentialsException("Invalid token");
-		}
+        String accessToken = authHeader.substring("Bearer ".length());
+        try {
+            Claims claim = jwtTokenizer.parseAccessToken(accessToken);
+            List<GrantedAuthority> authorities = getAuthorities(claim);
+            Authentication authentication = new JwtAuthentication(
+                    authorities,
+                    claim.get("username", String.class),
+                    null
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        } catch (ExpiredJwtException e) {
+            request.setAttribute("error", JwtErrorCode.JWT_TOKEN_EXPIRED);
+            throw new BadCredentialsException("Invalid token");
+        } catch (UnsupportedJwtException e) {
+            request.setAttribute("error", JwtErrorCode.JWT_UNSUPPORTED);
+            throw new BadCredentialsException("Invalid token");
+        } catch (MalformedJwtException e) {
+            request.setAttribute("error", JwtErrorCode.JWT_MALFORMED);
+            throw new BadCredentialsException("Invalid token");
+        } catch (PrematureJwtException e) {
+            request.setAttribute("error", JwtErrorCode.JWT_NOT_YET_VALID);
+            throw new BadCredentialsException("Invalid token");
+        } catch (IllegalArgumentException e) {
+            request.setAttribute("error", JwtErrorCode.JWT_ILLEGAL_ARGUMENT);
+            throw new BadCredentialsException("Invalid token");
+        }
 
-		filterChain.doFilter(request, response);
-	}
+        filterChain.doFilter(request, response);
+    }
 
-	private List<GrantedAuthority> getAuthorities(Claims claims) {
-		@SuppressWarnings("unchecked")
-		List<String> roles = (List<String>) claims.get("roles");
-		List<GrantedAuthority> authorities = new ArrayList<>();
-		for (String role : roles)
-			authorities.add(new SimpleGrantedAuthority(role));
-		return authorities;
-	}
+    private List<GrantedAuthority> getAuthorities(Claims claims) {
+        @SuppressWarnings("unchecked")
+        List<String> roles = (List<String>) claims.get("roles");
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        for (String role : roles)
+            authorities.add(new SimpleGrantedAuthority(role));
+        return authorities;
+    }
 }

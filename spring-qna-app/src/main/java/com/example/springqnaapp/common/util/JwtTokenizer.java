@@ -1,6 +1,7 @@
 package com.example.springqnaapp.common.util;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -100,4 +101,25 @@ public class JwtTokenizer {
 	public Claims parseRefreshToken(String token) {
 		return parseToken(token, refreshToken);
 	}
+
+
+    public boolean validateAccessToken(String token){
+        return validate(token, accessToken);
+    }
+
+    public boolean validateRefreshToken(String token){
+        return validate(token, refreshToken);
+    }
+
+    public boolean validate(String token, byte[] secret) {
+        try{
+            Jwts.parser()
+                    .verifyWith(getKey(secret))
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        }catch (JwtException e){
+            return false;
+        }
+    }
 }

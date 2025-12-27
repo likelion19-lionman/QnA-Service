@@ -18,30 +18,30 @@ import java.util.HashMap;
 @RequiredArgsConstructor
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
-	private final ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
-	@Override
-	public void commence(HttpServletRequest request,
-	                     HttpServletResponse response,
-	                     AuthenticationException authException) throws IOException, ServletException {
-		String error = request.getParameter("error");
+    @Override
+    public void commence(HttpServletRequest request,
+                         HttpServletResponse response,
+                         AuthenticationException authException) throws IOException, ServletException {
+        String error = request.getParameter("error");
 
-		if (error == null)
-			log.error("Commence Occurred ::  "+ authException.getMessage());
+        if (error == null)
+            log.error("Commence Occurred ::  "+ authException.getMessage());
 
-		JwtErrorCode jwtErrorCode = JwtErrorCode.findByCode(error);
+        JwtErrorCode jwtErrorCode = JwtErrorCode.findByCode(error);
 
-		if (jwtErrorCode == null || jwtErrorCode == JwtErrorCode.JWT_UNKNOWN)
-			log.error("Commence Occurred ::  "+ authException.getMessage());
+        if (jwtErrorCode == null || jwtErrorCode == JwtErrorCode.JWT_UNKNOWN)
+            log.error("Commence Occurred ::  "+ authException.getMessage());
 
-		response.setContentType("application/json;charset=UTF-8");
-		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json;charset=UTF-8");
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-		HashMap<String,Object> errorInfo = new HashMap<>();
-		errorInfo.put("message", jwtErrorCode.getMessage());
-		errorInfo.put("code", jwtErrorCode.getCode());
+        HashMap<String,Object> errorInfo = new HashMap<>();
+        errorInfo.put("message", jwtErrorCode.getMessage());
+        errorInfo.put("code", jwtErrorCode.getCode());
 
-		String responseJson = objectMapper.writeValueAsString(errorInfo);
-		response.getWriter().write(responseJson);
-	}
+        String responseJson = objectMapper.writeValueAsString(errorInfo);
+        response.getWriter().write(responseJson);
+    }
 }
