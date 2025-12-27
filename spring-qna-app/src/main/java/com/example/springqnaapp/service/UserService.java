@@ -1,5 +1,7 @@
 package com.example.springqnaapp.service;
 
+import com.example.springqnaapp.common.dto.EmailRequestDto;
+import com.example.springqnaapp.common.dto.EmailVerifyDto;
 import com.example.springqnaapp.common.dto.LoginResponseDto;
 import com.example.springqnaapp.domain.User;
 import com.example.springqnaapp.common.dto.UserRequestDto;
@@ -10,9 +12,9 @@ public interface UserService {
 
     User register(UserRequestDto requestDto);
 
-    boolean sendAuthCode(String email) throws MessagingException;
+    boolean sendAuthCode(EmailRequestDto requestDto) throws MessagingException;
 
-    boolean validateAuthCode(String email, String authCode);
+    boolean validateAuthCode(EmailVerifyDto verifyDto);
     
     LoginResponseDto login(String username, String password);
 }
