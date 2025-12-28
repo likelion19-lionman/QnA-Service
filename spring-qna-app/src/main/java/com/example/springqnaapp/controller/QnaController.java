@@ -42,14 +42,11 @@ public class QnaController {
             @RequestParam(defaultValue = "0")
             @Min(value = 0, message = "페이지는 0 이상 값이어야 합니다.")
             Integer page,
-
             @RequestParam(defaultValue = "10")
             @Min(value = 1, message = "사이즈는 1 이상 값이어야 합니다.")
             Integer size,
-
             Principal principal
     ) {
-
         String username = principal.getName();
         Page<QnaResponseDto> qnaPage = qnaService.retrieveQnaPage(page, size, username);
         return ResponseEntity.ok(qnaPage);
@@ -73,7 +70,6 @@ public class QnaController {
     ) {
 		String username = principal.getName();
 		String result = qnaService.qna(qnaId, comment, username);
-
 		return ResponseEntity.ok(result);
     }
 
@@ -82,12 +78,6 @@ public class QnaController {
             @PathVariable("id") Long qnaId,
             Principal principal
     ) {
-
-        // qnaId 값이 null로 들어올 경우 삭제되는 값이 없도록 설정
-        if (qnaId == null) {
-            return ResponseEntity.noContent().build();
-        }
-
         String username = principal.getName();
         qnaService.delete(qnaId, username);
         return ResponseEntity.noContent().build();

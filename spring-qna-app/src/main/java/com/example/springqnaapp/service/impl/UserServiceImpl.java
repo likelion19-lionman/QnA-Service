@@ -19,7 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -165,6 +164,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional
 	public TokensDto login(String username, String password) {
 		User user = userRepository.findByUsername(username).orElseThrow(() ->
 				new IllegalArgumentException("존재하지 않는 회원입니다."));
@@ -174,22 +174,11 @@ public class UserServiceImpl implements UserService {
 
 		var roles = user.getStringRoles();
 
-		String accessToken = jwtTokenizer.createAccessToken(
-				user.getUsername(),
-				user.getEmail(),
-				roles);
-
-		String refreshToken = jwtTokenizer.createRefreshToken(
-				user.getUsername(),
-				user.getEmail(),
-				roles);
+		String accessToken = jwtTokenizer.createAccessToken(user.getUsername(), user.getEmail(), roles);
+		String refreshToken = jwtTokenizer.createRefreshToken(user.getUsername(), user.getEmail(), roles);
 
 		refreshTokenRepository.save(new RefreshToken(user.getId(), refreshToken));
 
-		return new LoginResponseDto(
-				accessToken,
-				refreshToken,
-				user.getUsername()
-		);
+		return new TokensDto(accessToken, refreshToken);
 	}
 }

@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -162,7 +162,7 @@ public class AuthController {
 			String newAccessToken = jwtTokenizer.createAccessToken(
 					claim.get("username", String.class),
 					claim.get("email", String.class),
-					(List<String>) claim.get("roles", List.class)
+					(Set<String>) claim.get("roles", Set.class)
 			);
 
 			// 쿠키를 구워 반환
