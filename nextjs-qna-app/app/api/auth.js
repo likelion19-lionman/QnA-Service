@@ -1,4 +1,4 @@
-import { baseRequest } from './api';
+import { baseRequest, API_BASE_URL } from './api';
 
 export async function checkDuplication(
     username
@@ -82,4 +82,26 @@ export async function validateAuthCode(email, code) {
         },
         `${email} 이메일 인증 실패`
     );
+}
+
+export async function refresh() {
+    try {
+        await baseRequest(
+            '/auth/refresh',
+            'POST',
+            { 
+                'Content-Type': 'application/json'
+            },
+            {
+                refreshToken: localStorage.getItem('refreshToken')
+            },
+            '토큰 갱신 실패'
+        );
+
+        console.log('✅ 액세스 토큰 갱신 및 쿠키 저장 완료');
+        return;
+    } catch (error) {
+        console.error(error);
+        window.location.href = '/login';
+    }
 }
