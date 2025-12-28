@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+'use client'
+import { useMemo } from "react";
 import { checkDuplication } from "@/lib/api/auth.js"
 
 
@@ -12,7 +13,7 @@ const USERNAME_REGEX = /^[a-zA-Z0-9]{4,}$/;
         return{ok: true, message: ''}
     }
 
-export default function validateUsername({username, setUsername, onChecked}) {
+export default function ValidateUsername({username, setUsername, onChecked}) {
 
     const usernameRule = useMemo(() => validate(username), [username])
 

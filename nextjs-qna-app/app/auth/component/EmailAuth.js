@@ -7,7 +7,7 @@ export default function EmailAuth({email, setEmail, onVerified}){
     
     const [code, setCode] = useState('');
     const [status, setStatus] = useState('');
-    const [message, setMessage] = useState('');
+    const [message, setMessage] = useState(idle);
 
 
     const sendCode = async () => {
