@@ -2,6 +2,7 @@ package com.example.springqnaapp.service;
 
 import com.example.springqnaapp.common.dto.EmailCodeRequestDto;
 import com.example.springqnaapp.common.dto.EmailVerifyRequestDto;
+import com.example.springqnaapp.common.dto.TokensDto;
 import com.example.springqnaapp.domain.User;
 import com.example.springqnaapp.common.dto.RegisterRequestDto;
 import jakarta.mail.MessagingException;
@@ -14,6 +15,6 @@ public interface UserService {
     boolean sendAuthCode(EmailCodeRequestDto requestDto) throws MessagingException;
 
     boolean validateAuthCode(EmailVerifyRequestDto verifyDto);
-    
-    String login(String username, String password);
+
+	TokensDto login(String username, String password);
 }

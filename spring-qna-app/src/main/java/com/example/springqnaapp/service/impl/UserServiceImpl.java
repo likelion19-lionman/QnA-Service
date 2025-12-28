@@ -3,6 +3,7 @@ package com.example.springqnaapp.service.impl;
 import com.example.springqnaapp.common.dto.EmailCodeRequestDto;
 import com.example.springqnaapp.common.dto.EmailVerifyRequestDto;
 import com.example.springqnaapp.common.dto.RegisterRequestDto;
+import com.example.springqnaapp.common.dto.TokensDto;
 import com.example.springqnaapp.common.util.JwtTokenizer;
 import com.example.springqnaapp.domain.Auth;
 import com.example.springqnaapp.domain.RefreshToken;
@@ -164,7 +165,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public String login(String username, String password) {
+	public TokensDto login(String username, String password) {
 		User user = userRepository.findByUsername(username).orElseThrow(() ->
 				new IllegalArgumentException("존재하지 않는 회원입니다."));
 
@@ -182,6 +183,6 @@ public class UserServiceImpl implements UserService {
 				List.of("ROLE_USER"));
 		refreshTokenRepository.save(new RefreshToken(user.getId(), refreshToken));
 
-		return accessToken;
+		return new TokensDto(accessToken, refreshToken);
 	}
 }

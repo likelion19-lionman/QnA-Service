@@ -3,6 +3,7 @@ package com.example.springqnaapp.controller;
 import com.example.springqnaapp.common.dto.EmailCodeRequestDto;
 import com.example.springqnaapp.common.dto.EmailVerifyRequestDto;
 import com.example.springqnaapp.common.dto.LoginRequestDto;
+import com.example.springqnaapp.common.dto.TokensDto;
 import com.example.springqnaapp.common.util.CookieHandler;
 import com.example.springqnaapp.common.util.JwtTokenizer;
 import com.example.springqnaapp.common.dto.RegisterRequestDto;
@@ -105,16 +106,12 @@ public class AuthController {
 		// 회원가입 처리
 		try {
 			userService.register(registerRequestDto);
-
-			// 자동 로그인 처리
-			String accessToken = userService.login(
+			TokensDto tokens = userService.login(
 					registerRequestDto.username(),
 					registerRequestDto.password()
 			);
-
-			cookieHandler.createCookie(response, "accessToken", accessToken);
-
-			return ResponseEntity.noContent().build();
+			cookieHandler.createCookie(response, "accessToken", tokens.accessToken());
+			return ResponseEntity.ok(tokens.refreshToken());
 		} catch (IllegalArgumentException e) {
 			// 이메일 미인증
 			return ResponseEntity.badRequest()
@@ -133,19 +130,17 @@ public class AuthController {
 			LoginRequestDto loginRequestDto,
 			HttpServletResponse response
 	) {
-		String accessToken = userService.login(
+		TokensDto tokens = userService.login(
 				loginRequestDto.username(),
 				loginRequestDto.password()
 		);
-
-		cookieHandler.createCookie(response, "accessToken", accessToken);
-
-		return ResponseEntity.noContent().build();
+		cookieHandler.createCookie(response, "accessToken", tokens.accessToken());
+		return ResponseEntity.ok(tokens.refreshToken());
 	}
 
 	@PostMapping(
 			value = "/refresh",
-			consumes = "application/json",
+			consumes = "text/plain",
 			produces = "application/json"
 	)
 	public ResponseEntity<?> refresh(
@@ -159,9 +154,10 @@ public class AuthController {
 			var refreshToken = refreshTokenRepository.findByValue(invalidRefreshToken)
 					.orElseThrow(() -> new IllegalArgumentException("토큰이 서버에 의해 차단되었습니다."));
 
-			// 만료되었다면 catch 문으로, 제대로 파싱이 되었다면 AccessToken 을 만듦
+			// 만료되었다면 catch 문으로
 			Claims claim = jwtTokenizer.parseRefreshToken(refreshToken.getValue());
 
+			// 제대로 파싱이 되었다면 AccessToken 을 만듦
 			@SuppressWarnings("unchecked")
 			String newAccessToken = jwtTokenizer.createAccessToken(
 					claim.get("username", String.class),
