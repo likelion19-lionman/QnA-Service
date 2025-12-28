@@ -12,5 +12,4 @@ public record EmailRequestDto(
                 message = "Gmail 계정만 사용할 수 있습니다"
         )
         String email
-) {
-}
+) { }

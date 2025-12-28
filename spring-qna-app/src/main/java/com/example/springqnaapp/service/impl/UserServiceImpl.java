@@ -3,7 +3,7 @@ package com.example.springqnaapp.service.impl;
 import com.example.springqnaapp.common.dto.EmailRequestDto;
 import com.example.springqnaapp.common.dto.EmailVerifyDto;
 import com.example.springqnaapp.common.dto.LoginResponseDto;
-import com.example.springqnaapp.common.dto.UserRequestDto;
+import com.example.springqnaapp.common.dto.RegisterRequestDto;
 import com.example.springqnaapp.common.util.JwtTokenizer;
 import com.example.springqnaapp.domain.Auth;
 import com.example.springqnaapp.domain.RefreshToken;
@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
      */
 	@Override
 	@Transactional
-	public User register(UserRequestDto requestDto) {
+	public User register(RegisterRequestDto requestDto) {
 
         // 1. 이메일 인증 완료 확인
         if (!isEmailVerified(requestDto.email())) {

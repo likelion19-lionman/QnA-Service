@@ -19,5 +19,4 @@ public record EmailVerifyDto(
                 message = "인증번호는 대문자 영문자와 숫자로 이루어진 6자리여야 합니다."
         )
         String authCode
-) {
-}
+) { }
