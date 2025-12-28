@@ -1,8 +1,7 @@
 package com.example.springqnaapp.service.impl;
 
-import com.example.springqnaapp.common.dto.EmailRequestDto;
-import com.example.springqnaapp.common.dto.EmailVerifyDto;
-import com.example.springqnaapp.common.dto.LoginResponseDto;
+import com.example.springqnaapp.common.dto.EmailCodeRequestDto;
+import com.example.springqnaapp.common.dto.EmailVerifyRequestDto;
 import com.example.springqnaapp.common.dto.RegisterRequestDto;
 import com.example.springqnaapp.common.util.JwtTokenizer;
 import com.example.springqnaapp.domain.Auth;
@@ -73,6 +72,7 @@ public class UserServiceImpl implements UserService {
 
         // 4. 인증 정보 삭제
         Auth auth = authRepository.findByEmail(requestDto.email());
+
         if (auth != null) {
             authRepository.delete(auth);
         }
@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @Transactional
-    public boolean sendAuthCode(EmailRequestDto requestDto) throws MessagingException {
+    public boolean sendAuthCode(EmailCodeRequestDto requestDto) throws MessagingException {
 
         String email = requestDto.email();
 
@@ -136,7 +136,7 @@ public class UserServiceImpl implements UserService {
      */
 	@Override
     @Transactional
-	public boolean validateAuthCode(EmailVerifyDto verifyDto) {
+	public boolean validateAuthCode(EmailVerifyRequestDto verifyDto) {
 
         String email = verifyDto.email();
         String authCode = verifyDto.authCode();
@@ -164,7 +164,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public LoginResponseDto login(String username, String password) {
+	public String login(String username, String password) {
 		User user = userRepository.findByUsername(username).orElseThrow(() ->
 				new IllegalArgumentException("존재하지 않는 회원입니다."));
 
@@ -180,12 +180,8 @@ public class UserServiceImpl implements UserService {
 				user.getUsername(),
 				user.getEmail(),
 				List.of("ROLE_USER"));
+		refreshTokenRepository.save(new RefreshToken(user.getId(), refreshToken));
 
-		refreshTokenRepository.save(
-				new RefreshToken(user.getId(), refreshToken));
-
-		return new LoginResponseDto(
-				accessToken, refreshToken, user.getUsername()
-		);
+		return accessToken;
 	}
 }
