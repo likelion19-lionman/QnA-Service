@@ -1,5 +1,21 @@
 import { baseRequest } from './api';
 
+export async function checkDuplication(
+    username
+) {
+    return await baseRequest(
+        '/auth/check-duplication',
+        'POST',
+        {
+            'Content-Type': 'text/plain',
+            'Accept': 'application/json'
+        },
+        {
+            username: username
+        }
+    )
+}
+
 export async function register(
     username,
     email,
@@ -9,7 +25,7 @@ export async function register(
         '/auth/register',
         'POST',
         {
-            'Content-Type': 'application.json',
+            'Content-Type': 'application/json',
             'Accept': 'application/json'
         },
         {
@@ -31,7 +47,6 @@ export async function login(username, password) {
         },
         {
             'username': username,
-            'email': email,
             'password': password
         },
         `${username} 로그인 실패`
