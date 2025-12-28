@@ -1,0 +1,27 @@
+package com.example.springqnaapp.common.util;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+
+@Component
+public class CookieHandler {
+	private static final boolean XSS_ATTACK_SECURE = true;
+	private static final boolean ONLY_HTTPS = true;
+	private static final String VALID_PARENT_PATH = "/";
+	private static final int MAX_AGE_SECONDS = 420;
+
+	public void createCookie(
+			HttpServletResponse response,
+			String key,
+			String value) {
+		Cookie cookie = new Cookie(key, value);
+
+		cookie.setHttpOnly(ONLY_HTTPS);
+		cookie.setSecure(XSS_ATTACK_SECURE);
+		cookie.setPath(VALID_PARENT_PATH);
+		cookie.setMaxAge(MAX_AGE_SECONDS);
+
+		response.addCookie(cookie);
+	}
+}
