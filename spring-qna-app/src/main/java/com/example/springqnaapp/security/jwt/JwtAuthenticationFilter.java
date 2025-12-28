@@ -29,49 +29,55 @@ import java.util.stream.Collectors;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final JwtTokenizer jwtTokenizer;
 
-	@Override
-	protected void doFilterInternal(
-			HttpServletRequest request,
-			HttpServletResponse response,
-			FilterChain filterChain
-	) throws ServletException, IOException {
-		String authHeader = request.getHeader("Authorization");
+    @Override
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
+        String requestURI = request.getRequestURI();
+        if (requestURI.startsWith("/api/auth")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-			filterChain.doFilter(request, response);
-			return;
-		}
+        String authHeader = request.getHeader("Authorization");
 
-		String accessToken = authHeader.substring("Bearer ".length());
-		try {
-			Claims claim = jwtTokenizer.parseAccessToken(accessToken);
-			Set<GrantedAuthority> authorities = getAuthorities(claim);
-			Authentication authentication = new JwtAuthentication(
-					authorities,
-					claim.get("username", String.class),
-					null
-			);
-			SecurityContextHolder.getContext()
-			                     .setAuthentication(authentication);
-		} catch (ExpiredJwtException e) {
-			request.setAttribute("error", JwtErrorCode.JWT_TOKEN_EXPIRED);
-			throw new BadCredentialsException("Invalid token");
-		} catch (UnsupportedJwtException e) {
-			request.setAttribute("error", JwtErrorCode.JWT_UNSUPPORTED);
-			throw new BadCredentialsException("Invalid token");
-		} catch (MalformedJwtException e) {
-			request.setAttribute("error", JwtErrorCode.JWT_MALFORMED);
-			throw new BadCredentialsException("Invalid token");
-		} catch (PrematureJwtException e) {
-			request.setAttribute("error", JwtErrorCode.JWT_NOT_YET_VALID);
-			throw new BadCredentialsException("Invalid token");
-		} catch (IllegalArgumentException e) {
-			request.setAttribute("error", JwtErrorCode.JWT_ILLEGAL_ARGUMENT);
-			throw new BadCredentialsException("Invalid token");
-		}
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-		filterChain.doFilter(request, response);
-	}
+        String accessToken = authHeader.substring("Bearer ".length());
+        try {
+            Claims claim = jwtTokenizer.parseAccessToken(accessToken);
+            Set<GrantedAuthority> authorities = getAuthorities(claim);
+            Authentication authentication = new JwtAuthentication(
+                    authorities,
+                    claim.get("username", String.class),
+                    null
+            );
+            SecurityContextHolder.getContext()
+                    .setAuthentication(authentication);
+        } catch (ExpiredJwtException e) {
+            request.setAttribute("error", JwtErrorCode.JWT_TOKEN_EXPIRED);
+            throw new BadCredentialsException("Invalid token");
+        } catch (UnsupportedJwtException e) {
+            request.setAttribute("error", JwtErrorCode.JWT_UNSUPPORTED);
+            throw new BadCredentialsException("Invalid token");
+        } catch (MalformedJwtException e) {
+            request.setAttribute("error", JwtErrorCode.JWT_MALFORMED);
+            throw new BadCredentialsException("Invalid token");
+        } catch (PrematureJwtException e) {
+            request.setAttribute("error", JwtErrorCode.JWT_NOT_YET_VALID);
+            throw new BadCredentialsException("Invalid token");
+        } catch (IllegalArgumentException e) {
+            request.setAttribute("error", JwtErrorCode.JWT_ILLEGAL_ARGUMENT);
+            throw new BadCredentialsException("Invalid token");
+        }
+
+        filterChain.doFilter(request, response);
+    }
 
 	private Set<GrantedAuthority> getAuthorities(Claims claims) {
 		@SuppressWarnings("unchecked")

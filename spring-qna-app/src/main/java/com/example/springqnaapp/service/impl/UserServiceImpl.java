@@ -42,33 +42,39 @@ public class UserServiceImpl implements UserService {
      * 회원가입
      *
      * 프로세스:
-     * 1. 이메일 인증 완료 확인
-     * 2. 이메일 중복 확인
-     * 3. 사용자 정보 저장
-     * 4. 인증 정보 삭제
+     * 1. username 중복 확인
+     * 2. 이메일 인증 완료 확인
+     * 3. 이메일 중복 확인
+     * 4. 사용자 정보 저장
+     * 5. 인증 정보 삭제
      */
 	@Override
 	@Transactional
 	public User register(RegisterRequestDto requestDto) {
 
-        // 1. 이메일 인증 완료 확인
+        // 1. username 중복 확인
+        if (userRepository.findByUsername(requestDto.username()).isPresent()) {
+            throw new IllegalStateException("이미 사용 중인 아이디입니다.");
+        }
+
+        // 2. 이메일 인증 완료 확인
         if (!isEmailVerified(requestDto.email())) {
             throw new IllegalStateException("이메일 인증이 완료되지 않았습니다.");
         }
 
-        // 2. 이메일 중복 확인
+        // 3. 이메일 중복 확인
         if (userRepository.existsByEmail(requestDto.email())) {
             throw new IllegalStateException("이미 사용 중인 이메일입니다.");
         }
 
-        // 3. 사용자 정보 저장
+        // 4. 사용자 정보 저장
 		User user = new User(requestDto.username(),
 		                     requestDto.email(),
 		                     passwordEncoder.encode(requestDto.password()));
 
         User savedUser = userRepository.save(user);
 
-        // 4. 인증 정보 삭제
+        // 5. 인증 정보 삭제
         Auth auth = authRepository.findByEmail(requestDto.email());
 
         if (auth != null) {

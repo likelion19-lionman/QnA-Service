@@ -38,11 +38,14 @@ public class AuthController {
 			consumes = "text/plain",
 			produces = "application/json"
 	)
-	public ResponseEntity<Boolean> checkDuplication(
+	public ResponseEntity<?> checkDuplication(
 			@RequestBody String username
 	) {
-		return ResponseEntity.ok(userService.checkDuplication(username));
-	}
+        boolean checked = userService.checkDuplication(username);
+        return checked
+                ? ResponseEntity.ok().body("사용 가능한 아이디입니다.")
+                : ResponseEntity.badRequest().body("이미 존재하는 아이디입니다.");
+    }
 
 	// 인증번호 전송
 	@PostMapping(
