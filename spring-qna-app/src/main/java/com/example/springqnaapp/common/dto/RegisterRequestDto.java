@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 
-public record UserRequestDto(
+public record RegisterRequestDto(
 		@Min(value = 4, message = "유저이름은 최소 4자 이상입니다.")
 		String username,
 
