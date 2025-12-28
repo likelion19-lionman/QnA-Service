@@ -1,3 +1,5 @@
+import { refresh } from './auth';
+
 const getBaseURL = () => {
     if (typeof window !== 'undefined') {
         return `${window.location.protocol}//${window.location.hostname}:8080/api`;
@@ -7,12 +9,17 @@ const getBaseURL = () => {
 
 const API_BASE_URL = getBaseURL();
 
-export async function baseRequest(url, method, headers, body, errMsg) {
+export async function baseRequest(
+    url,
+    method,
+    headers,
+    body,
+    errMsg
+) {
     const fetchOptions = {
         method: method,
         headers: headers,
-        body: JSON.stringify(body),
-        credentials: 'include'
+        body: JSON.stringify(body)
     };
 
     let res = await fetch(`${API_BASE_URL}${url}`, fetchOptions);
@@ -32,5 +39,36 @@ export async function baseRequest(url, method, headers, body, errMsg) {
 
     const data = await res.json();
     console.log('⭐️ 결과:', data); // 템플릿 리터럴 대신 , 를 써야 객체 내용이 보임
+    return data;
+}
+
+
+async function refresh() {
+    const res = await fetch(`${API_BASE_URL}/auth/refresh`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            refreshToken: localStorage.getItem('refreshToken')
+        }),
+        credentials: 'include'
+    });
+
+    if (!res.ok) {
+        localStorage.removeItem('refreshToken');
+        window.location.href = '/login';
+        throw new Error('리프레시 토큰이 만료되었습니다.');
+    }
+
+    const data = await res.json();
+    
+    // 신규 리프레시 토큰이 내려온다면 갱신
+    if (data && data.refreshToken) {
+        console.log("✅ 갱신 완료")
+        localStorage.setItem('refreshToken', data.refreshToken);
+    }
+    
     return data;
 }

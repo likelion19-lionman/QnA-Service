@@ -1,4 +1,4 @@
-import { baseRequest, API_BASE_URL } from './api';
+import { baseRequest } from './api';
 
 export async function checkDuplication(
     username
@@ -21,7 +21,7 @@ export async function register(
     email,
     password
 ) {
-    return await baseRequest(
+    const res = await baseRequest(
         '/auth/register',
         'POST',
         {
@@ -35,10 +35,15 @@ export async function register(
         },
         `회원가입 불가`
     );
+
+    if (res && res.refreshToken) {
+        console.log("✅ 회원가입 완료 및 refreshToken 저장");
+        localStorage.setItem('refreshToken', res.refreshToken);
+    }
 }
 
 export async function login(username, password) {
-    return await baseRequest(
+    const res = await baseRequest(
         '/auth/login',
         'POST',
         {
@@ -51,6 +56,11 @@ export async function login(username, password) {
         },
         `${username} 로그인 실패`
     );
+
+    if (res && res.refreshToken) {
+        console.log("✅ 회원가입 완료 및 refreshToken 저장");
+        localStorage.setItem('refreshToken', res.refreshToken);
+    }
 }
 
 export async function requestAuthCode(email) {
@@ -82,26 +92,4 @@ export async function validateAuthCode(email, code) {
         },
         `${email} 이메일 인증 실패`
     );
-}
-
-export async function refresh() {
-    try {
-        await baseRequest(
-            '/auth/refresh',
-            'POST',
-            { 
-                'Content-Type': 'application/json'
-            },
-            {
-                refreshToken: localStorage.getItem('refreshToken')
-            },
-            '토큰 갱신 실패'
-        );
-
-        console.log('✅ 액세스 토큰 갱신 및 쿠키 저장 완료');
-        return;
-    } catch (error) {
-        console.error(error);
-        window.location.href = '/login';
-    }
 }
