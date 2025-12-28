@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface QnaRepository extends JpaRepository<Qna, Long> {
-    Page<Qna> findByUserUsernameOrderByCreatedAtDesc(String username, Pageable pageable);
+    Page<Qna> findByUsername(String username, Pageable pageable);
 }

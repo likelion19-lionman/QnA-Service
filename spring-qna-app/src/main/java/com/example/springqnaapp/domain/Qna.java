@@ -48,8 +48,18 @@ public class Qna {
         this.title = title;
     }
 
-    public void addComment(Comment comment) {
+    public Comment addComment(Comment comment) {
         comments.add(comment);
         comment.setQna(this);
+		return comment;
     }
+
+	public boolean isWriter(String username) {
+		return user.getUsername().equals(username);
+	}
+
+	public boolean commentable(String username) {
+		User user = comments.getLast().getUser();
+		return user.getUsername().equals(username) || user.hasRole("ROLE_ADMIN");
+	}
 }

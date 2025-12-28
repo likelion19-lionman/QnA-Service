@@ -8,5 +8,6 @@ public interface QnaService {
     QnaResponseDto createQna(QnaRequestDto qnaRequestDto, String username);
     Page<QnaResponseDto> retrieveQnaPage(Integer page, Integer size, String username);
     QnaResponseDto retrieveQna(Long id, String username);
+	String qna(Long id, String comment, String username);
     void delete(Long id, String username);
 }
