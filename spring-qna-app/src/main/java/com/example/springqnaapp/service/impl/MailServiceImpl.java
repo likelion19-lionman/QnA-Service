@@ -20,8 +20,7 @@ public class MailServiceImpl implements MailService {
     @Value( "${spring.mail.username}")
     private String senderEmail;
 
-    @Override
-    public String createCode() {
+    private String createCode() {
         Random random = new Random();
         StringBuilder key = new StringBuilder();
 
@@ -36,8 +35,7 @@ public class MailServiceImpl implements MailService {
         return key.toString();
     }
 
-    @Override
-    public MimeMessage createMail(String mail, String authCode) throws MessagingException {
+    private MimeMessage createMail(String mail, String authCode) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
 
         message.setFrom(senderEmail);
