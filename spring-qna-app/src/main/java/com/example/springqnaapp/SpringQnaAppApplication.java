@@ -8,12 +8,14 @@ import com.example.springqnaapp.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.List;
+import java.util.Set;
 
 @SpringBootApplication
+@EnableJpaAuditing
 public class SpringQnaAppApplication {
 
 	public static void main(String[] args) {
@@ -32,8 +34,8 @@ public class SpringQnaAppApplication {
 					.orElse(null);
 			if (oldUser == null) {
 				User user = userRepository.save(new User("login", "email@email.com", passwordEncoder.encode("1234")));
-				String accessToken = jwtTokenizer.createAccessToken(user.getUsername(), user.getEmail(), List.of("ROLE_USER"));
-				String refreshToken = jwtTokenizer.createRefreshToken(user.getUsername(), user.getEmail(), List.of("ROLE_USER"));
+				String accessToken = jwtTokenizer.createAccessToken(user.getUsername(), user.getEmail(), Set.of("ROLE_USER"));
+				String refreshToken = jwtTokenizer.createRefreshToken(user.getUsername(), user.getEmail(), Set.of("ROLE_USER"));
 				refreshTokenRepository.save(new RefreshToken(user.getId(), refreshToken));
 
 				System.out.println("\n\n\n");

@@ -20,8 +20,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -44,13 +45,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		String accessToken = authHeader.substring("Bearer ".length());
 		try {
 			Claims claim = jwtTokenizer.parseAccessToken(accessToken);
-			List<GrantedAuthority> authorities = getAuthorities(claim);
+			Set<GrantedAuthority> authorities = getAuthorities(claim);
 			Authentication authentication = new JwtAuthentication(
 					authorities,
 					claim.get("username", String.class),
 					null
 			);
-			SecurityContextHolder.getContext().setAuthentication(authentication);
+			SecurityContextHolder.getContext()
+			                     .setAuthentication(authentication);
 		} catch (ExpiredJwtException e) {
 			request.setAttribute("error", JwtErrorCode.JWT_TOKEN_EXPIRED);
 			throw new BadCredentialsException("Invalid token");
@@ -71,12 +73,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		filterChain.doFilter(request, response);
 	}
 
-	private List<GrantedAuthority> getAuthorities(Claims claims) {
+	private Set<GrantedAuthority> getAuthorities(Claims claims) {
 		@SuppressWarnings("unchecked")
 		List<String> roles = (List<String>) claims.get("roles");
-		List<GrantedAuthority> authorities = new ArrayList<>();
-		for (String role : roles)
-			authorities.add(new SimpleGrantedAuthority(role));
-		return authorities;
+
+		return roles.stream()
+		            .map(SimpleGrantedAuthority::new)
+		            .collect(Collectors.toSet());
 	}
 }

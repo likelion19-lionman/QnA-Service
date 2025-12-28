@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 @Component
 public class JwtTokenizer {
@@ -39,7 +39,7 @@ public class JwtTokenizer {
 	public String createRefreshToken(
 			String username,
 			String email,
-			List<String> roles
+			Set<String> roles
 	) {
 		return createToken(this.refreshTokenExpiration,
 		                   username,
@@ -51,7 +51,7 @@ public class JwtTokenizer {
 	public String createAccessToken(
 			String username,
 			String email,
-			List<String> roles
+			Set<String> roles
 	) {
 		return createToken(this.accessTokenExpiration,
 		                   username,
@@ -64,7 +64,7 @@ public class JwtTokenizer {
 			Long expiration,
 			String username,
 			String email,
-			List<String> roles,
+			Set<String> roles,
 			byte[] secret
 	) {
 		Date now = new Date();
