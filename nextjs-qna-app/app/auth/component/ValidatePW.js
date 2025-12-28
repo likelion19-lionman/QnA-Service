@@ -27,9 +27,9 @@ export default function ValidatePW({ password, setPassword, confirm, setConfirm 
                 placeholder="password"
                 value={password}
                 onChange={(e) => {
-                    setPassword(e.target.value),
+                    setPassword(e.target.value)
                     setChecked(false)
-                }}  // check를 해야하게..
+                }} 
                 />
                 //비밀번호 규정 알림
                 {!pwRule.ok && password.length > 0 && <div>{pwRule.message}</div>}
