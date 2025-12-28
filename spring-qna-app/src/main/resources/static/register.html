@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>회원가입</title>
+    <style>
+      body {
+        font-family: Arial;
+        padding: 40px;
+      }
+      input {
+        display: block;
+        margin: 8px 0;
+        padding: 6px;
+        width: 300px;
+      }
+      button {
+        margin-top: 8px;
+        padding: 6px 12px;
+      }
+      .box {
+        margin-bottom: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>회원가입</h1>
+
+    <!-- 아이디 중복 체크 -->
+    <div class="box">
+      <h3>아이디 중복 체크</h3>
+      <input id="usernameCheck" placeholder="아이디" />
+      <button onclick="checkDuplication()">중복 체크</button>
+      <p id="dupResult"></p>
+    </div>
+
+    <!-- 이메일 인증 -->
+    <div class="box">
+      <h3>이메일 인증</h3>
+      <input id="email" placeholder="이메일" />
+      <button onclick="sendEmail()">인증 코드 전송</button>
+
+      <input id="emailCode" placeholder="인증 코드" />
+      <button onclick="verifyEmail()">인증 코드 확인</button>
+
+      <p id="emailResult"></p>
+    </div>
+
+    <!-- 회원가입 -->
+    <div class="box">
+      <h3>회원가입</h3>
+      <input id="username" placeholder="아이디" />
+      <input id="password" type="password" placeholder="비밀번호" />
+      <input id="emailRegister" placeholder="이메일" />
+      <button onclick="register()">회원가입</button>
+      <p id="registerResult"></p>
+    </div>
+
+    <script>
+      const API = "http://localhost:8080/api/auth";
+
+      // 아이디 중복 체크
+      function checkDuplication() {
+          const username = document.getElementById("usernameCheck").value;
+
+          fetch(${API}/check-duplication?username=${username})
+              .then(res => res.json())
+              .then(data => {
+                  document.getElementById("dupResult").innerText =
+                      data ? "사용 가능한 아이디입니다." : "이미 사용 중인 아이디입니다.";
+              });
+      }
+
+      // 이메일 인증 코드 전송
+      function sendEmail() {
+          const email = document.getElementById("email").value;
+
+          fetch(${API}/email/send, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email })
+          })
+          .then(res => res.text())
+          .then(msg => document.getElementById("emailResult").innerText = msg);
+      }
+      // 이메일 인증 코드 확인
+      function verifyEmail() {
+          const email = document.getElementById("email").value;
+          const authCode = document.getElementById("emailCode").value;
+
+          fetch(${API}/email/verify, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email, authCode })
+          })
+          .then(res => res.text())
+          .then(msg => document.getElementById("emailResult").innerText = msg);
+      }
+
+      // 회원가입
+      function register() {
+          const username = document.getElementById("username").value;
+          const password = document.getElementById("password").value;
+          const email = document.getElementById("emailRegister").value;
+
+          fetch(${API}/register, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ username, password, email })
+          })
+          .then(res => res.text())
+          .then(msg => document.getElementById("registerResult").innerText = msg);
+      }
+    </script>
+  </body>
+</html>
