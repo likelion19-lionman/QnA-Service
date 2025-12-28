@@ -50,9 +50,11 @@ public class QnaServiceImpl implements QnaService {
 	public Page<QnaResponseDto> retrieveQnaPage(Integer page, Integer size, String username) {
 		Pageable pageable = PageRequest.of(page, size,
 		                                   Sort.by(Sort.Direction.DESC, "createdAt"));
+		User user = userRepository.findByUsername(username)
+		                          .orElseThrow(() -> new IllegalArgumentException("Can't find user"));
 
 		return qnaRepository
-				.findByUsername(username, pageable)
+				.findByUserId(user.getId(), pageable)
 				.map(QnaResponseDto::from);
 	}
 

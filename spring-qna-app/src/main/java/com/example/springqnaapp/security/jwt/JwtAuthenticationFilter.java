@@ -20,10 +20,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -52,7 +51,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 					claim.get("username", String.class),
 					null
 			);
-			SecurityContextHolder.getContext().setAuthentication(authentication);
+			SecurityContextHolder.getContext()
+			                     .setAuthentication(authentication);
 		} catch (ExpiredJwtException e) {
 			request.setAttribute("error", JwtErrorCode.JWT_TOKEN_EXPIRED);
 			throw new BadCredentialsException("Invalid token");
@@ -75,10 +75,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private Set<GrantedAuthority> getAuthorities(Claims claims) {
 		@SuppressWarnings("unchecked")
-		Set<String> roles = (Set<String>) claims.get("roles");
-		Set<GrantedAuthority> authorities = new HashSet<>();
-		for (String role : roles)
-			authorities.add(new SimpleGrantedAuthority(role));
-		return authorities;
+		List<String> roles = (List<String>) claims.get("roles");
+
+		return roles.stream()
+		            .map(SimpleGrantedAuthority::new)
+		            .collect(Collectors.toSet());
 	}
 }

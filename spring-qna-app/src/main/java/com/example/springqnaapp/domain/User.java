@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @EqualsAndHashCode(of = { "username", "email" })
 public class User {
     @Id
@@ -45,14 +44,25 @@ public class User {
     )
     private List<Qna> qnas = new ArrayList<>();
 
+	@OneToMany(
+			mappedBy = "user",
+			fetch = FetchType.LAZY,
+			cascade = {
+					CascadeType.PERSIST,
+					CascadeType.MERGE
+			},
+			orphanRemoval = false
+	)
+	private List<Comment> comments = new ArrayList<>();
+
 	@ManyToMany(
 			fetch = FetchType.EAGER,
 			cascade = { CascadeType.PERSIST, CascadeType.MERGE }
 	)
 	@JoinTable(
 			name = "user_role",
-			joinColumns = { @JoinColumn(name = "user_id", nullable = false, updatable = false) },
-			inverseJoinColumns = { @JoinColumn(name = "role_id", nullable = false, updatable = false) }
+			joinColumns = { @JoinColumn(name = "user_id", nullable = false) },
+			inverseJoinColumns = { @JoinColumn(name = "role_id", nullable = false) }
 	)
 	private Set<Role> roles = new HashSet<>();
 

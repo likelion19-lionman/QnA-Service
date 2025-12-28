@@ -18,16 +18,21 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "qna_id")
-    @Setter(AccessLevel.PACKAGE)
-    private Qna qna;
-
     @Column(
             nullable = false,
             updatable = false
     )
     private String comment;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "qna_id")
+	@Setter(AccessLevel.PACKAGE)
+	private Qna qna;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "user_id")
+	@Setter(AccessLevel.PACKAGE)
+	private User user;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -35,8 +40,4 @@ public class Comment {
     public Comment(String comment) {
         this.comment = comment;
     }
-
-	public User getUser() {
-		return null;
-	}
 }

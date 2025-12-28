@@ -62,11 +62,9 @@ public class UserServiceImpl implements UserService {
         }
 
         // 3. 사용자 정보 저장
-		User user = User.builder()
-		                .username(requestDto.username())
-		                .password(passwordEncoder.encode(requestDto.password()))
-		                .email(requestDto.email())
-		                .build();
+		User user = new User(requestDto.username(),
+		                     requestDto.email(),
+		                     passwordEncoder.encode(requestDto.password()));
 
         User savedUser = userRepository.save(user);
 
