@@ -7,6 +7,7 @@ import com.example.springqnaapp.common.dto.TokensDto;
 import com.example.springqnaapp.common.util.CookieHandler;
 import com.example.springqnaapp.common.util.JwtTokenizer;
 import com.example.springqnaapp.common.dto.RegisterRequestDto;
+import com.example.springqnaapp.domain.RefreshToken;
 import com.example.springqnaapp.repository.RefreshTokenRepository;
 import com.example.springqnaapp.service.UserService;
 import io.jsonwebtoken.Claims;
@@ -15,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,8 +24,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
@@ -152,23 +158,22 @@ public class AuthController {
 			HttpServletResponse response
 	) {
 		try {
-			// 서버가 통제권을 가지고 있게 함. refresh 가 탈취 됐다면 refresh 를 DB 에서 삭제시켜
-			// 해당 로직으로 인해 막게 끔 해야 함.
-			var refreshToken = refreshTokenRepository.findByValue(invalidRefreshToken)
+			String cleanToken = invalidRefreshToken.trim();
+
+			var refreshToken = refreshTokenRepository.findByValue(cleanToken)
 					.orElseThrow(() -> new IllegalArgumentException("토큰이 서버에 의해 차단되었습니다."));
 
-			// 만료되었다면 catch 문으로
 			Claims claim = jwtTokenizer.parseRefreshToken(refreshToken.getValue());
 
-			// 제대로 파싱이 되었다면 AccessToken 을 만듦
 			@SuppressWarnings("unchecked")
+			List<String> rolesList = claim.get("roles", List.class);
+
 			String newAccessToken = jwtTokenizer.createAccessToken(
 					claim.get("username", String.class),
 					claim.get("email", String.class),
-					(Set<String>) claim.get("roles", Set.class)
+					new HashSet<>(rolesList)
 			);
 
-			// 쿠키를 구워 반환
 			cookieHandler.createCookie(response, "accessToken", newAccessToken);
 			return ResponseEntity.noContent().build();
 		} catch (ExpiredJwtException e) {
