@@ -1,9 +1,11 @@
 'use client'
-import { retrieveQna } from "@/app/api/qna";
+
 
 import { useEffect, useState } from "react";
-import CreateCommnet from "./component/CreateComment";
 import AnswerComments from "./component/AnsweComment";
+import AddComment from "./component/CreateComment";
+import { retrieveQna } from "@/app/api/qna";
+
 
 
 export default function QnaDetail({params}) {
@@ -31,7 +33,7 @@ export default function QnaDetail({params}) {
         })();
     }, [qnaId]) 
 
-    const hasAnswers = Array.isArray(qna.comments) && qna.comments.lengh > 0;
+    const hasAnswers = Array.isArray(qna?.comments) && qna.comments.length > 0;
 
 
     if (loading) return <div>읽어오는 중</div>
@@ -44,8 +46,8 @@ export default function QnaDetail({params}) {
             <p>내용 : {qna.content}</p>
             <div>작성자 : {qna.username}</div>
 
-            {hasAnswers ? <AnswerComments comments={qna.comments}/> :
-                <CreateCommnet
+            {hasAnswers ? <AnswerComments comments={qna?.comments}/> :
+                <AddComment
                     qnaId={qnaId} 
                     onSuccess={loadQna}
                 />

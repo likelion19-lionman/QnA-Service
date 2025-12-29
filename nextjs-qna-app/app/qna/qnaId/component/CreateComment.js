@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import qna from '@/app/api/qna'; 
+import {qna} from '@/app/api/qna'; 
 
 export default function AddComment({ qnaId, onSuccess }) {
   const [comment, setComment] = useState('');
@@ -23,7 +23,7 @@ export default function AddComment({ qnaId, onSuccess }) {
     }
   };
 
-  //if문으로 comment가 없을 때 이 리턴을 사용하고 있을 때는 데이터를 불러오는 걸로..?
+
   return (
     <div>
       <textarea

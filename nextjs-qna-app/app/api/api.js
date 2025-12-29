@@ -1,8 +1,3 @@
-<<<<<<< Updated upstream
-=======
-// import { refresh } from './auth';
-
->>>>>>> Stashed changes
 const getBaseURL = () => {
     if (typeof window !== 'undefined') {
         return `${window.location.protocol}//${window.location.hostname}:8080/api`;

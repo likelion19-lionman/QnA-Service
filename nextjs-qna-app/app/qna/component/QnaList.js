@@ -1,9 +1,9 @@
 'use client'
 
-import { retrieveQnas } from "@/app/api/qna";
-import { useEffect } from "react";
+import  {retrieveQnas}  from "@/app/api/qna";
+import { useEffect, useState } from "react";
 
-export default function QnaList() {
+export default function Qnas() {
     const [qnas, setQnas] = useState([]);
     const [page, setPage] = useState(0);
 
