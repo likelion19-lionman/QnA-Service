@@ -49,9 +49,10 @@ public class Qna {
     }
 
     public Comment addComment(Comment comment) {
+        comment.setUser(this.user);
         comments.add(comment);
         comment.setQna(this);
-		return comment;
+        return comment;
     }
 
 	public boolean accessible(String username) {
