@@ -16,6 +16,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class QnaServiceImpl implements QnaService {
@@ -40,8 +42,8 @@ public class QnaServiceImpl implements QnaService {
 
 		qnaRepository.save(qna);
 		return new QnaResponseDto(
-				qna.getTitle(),
-				qna.getComments()
+				qna.getId(),
+				qna.getTitle()
 		);
 	}
 
@@ -60,33 +62,23 @@ public class QnaServiceImpl implements QnaService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public QnaResponseDto retrieveQna(Long qnaId, String username) {
+	public List<Comment> retrieveQna(Long qnaId, String username) {
 		Qna qna = qnaRepository.findById(qnaId)
-		                       .orElseThrow(() ->
-				                                    new IllegalArgumentException("Can't find Qna"));
-
-		if (!qna.isWriter(username))
-			throw new RuntimeException("열람 권한이 없습니다.");
-
-		return new QnaResponseDto(
-				qna.getTitle(),
-				qna.getComments()
-		);
+		                       .orElseThrow(() -> new IllegalArgumentException("Can't find Qna"));
+		if (!qna.accessible(username)) throw new RuntimeException("열람 권한이 없습니다.");
+		return qna.getComments();
 	}
 
 	@Override
 	@Transactional
-	public String qna(Long id, String comment, String username) {
+	public Comment qna(Long id, String comment, String username) {
 		Qna qna = qnaRepository.findById(id)
-		                       .orElseThrow(() ->
-				                                    new IllegalArgumentException("Can't find Qna"));
-		if (!qna.isWriter(username))
-			throw new RuntimeException("열람 권한이 없습니다.");
-		if (!qna.commentable(username))
+		                       .orElseThrow(() -> new IllegalArgumentException("Can't find Qna"));
+
+		if (!(qna.accessible(username) && qna.commentable(username)))
 			throw new RuntimeException("질문을 할 수 없습니다. 답변을 받은 후 질문을 다시 해주세요.");
 
-		qna.addComment(new Comment(comment));
-		return comment;
+		return qna.addComment(new Comment(comment));
 	}
 
 	@Override
@@ -95,7 +87,7 @@ public class QnaServiceImpl implements QnaService {
 		Qna qna = qnaRepository.findById(qnaId)
 		                       .orElseThrow(() -> new IllegalArgumentException("Can't find Qna"));
 
-		if (!qna.isWriter(username))
+		if (!qna.accessible(username))
 			throw new RuntimeException("삭제 권한이 없습니다.");
 
 		qnaRepository.deleteById(qnaId);
