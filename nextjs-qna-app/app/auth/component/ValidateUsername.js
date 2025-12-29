@@ -1,6 +1,6 @@
 'use client'
 import { useMemo } from "react";
-import { checkDuplication } from "@/app/api/auth.js"
+import { checkDuplication } from "@/app/api/auth"
 
 
 const USERNAME_REGEX = /^[a-zA-Z0-9]{4,}$/;

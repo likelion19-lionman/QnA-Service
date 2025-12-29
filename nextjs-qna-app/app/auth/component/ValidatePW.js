@@ -31,9 +31,9 @@ export default function ValidatePW({ password, setPassword, confirm, setConfirm 
                     setChecked(false)
                 }} 
                 />
-                //비밀번호 규정 알림
+                <br/>
                 {!pwRule.ok && password.length > 0 && <div>{pwRule.message}</div>}
-
+                <br/>
             <input
                 type="password"
                 placeholder="confirmPW"

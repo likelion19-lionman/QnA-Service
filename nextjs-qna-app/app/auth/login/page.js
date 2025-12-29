@@ -1,6 +1,7 @@
 'use client'
 import { useState } from "react";
-import { login } from "../api/auth";
+import { login } from "@/app/api/auth";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
     const [username, setUsername] = useState('');
@@ -16,6 +17,8 @@ export default function LoginPage() {
             alert(e.message);
         }
     };
+
+    const router = useRouter();
         
     
 
@@ -38,6 +41,12 @@ export default function LoginPage() {
             
                 <button type="submit">login</button>
             </form>
+            <button
+              type="button"
+              onClick={()=> router.push("/auth")}
+            >
+              회원가입
+            </button>
         </div>
         )
 

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from "react"
-import { requestAuthCode, validateAuthCode } from "@/lib/api"
+import { requestAuthCode, validateAuthCode } from "@/app/api/auth"
 
 export default function EmailAuth({email, setEmail, onVerified}){
     
