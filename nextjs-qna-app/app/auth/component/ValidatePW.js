@@ -31,7 +31,11 @@ export default function ValidatePW({ password, setPassword, confirm, setConfirm 
                     setChecked(false)
                 }} 
                 />
+<<<<<<< Updated upstream
                 <br/>
+=======
+                
+>>>>>>> Stashed changes
                 {!pwRule.ok && password.length > 0 && <div>{pwRule.message}</div>}
                 <br/>
             <input
