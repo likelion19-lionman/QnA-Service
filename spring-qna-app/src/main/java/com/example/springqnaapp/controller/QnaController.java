@@ -1,7 +1,9 @@
 package com.example.springqnaapp.controller;
 
+import com.example.springqnaapp.common.dto.CommentResponseDto;
 import com.example.springqnaapp.common.dto.QnaRequestDto;
 import com.example.springqnaapp.common.dto.QnaResponseDto;
+import com.example.springqnaapp.domain.Comment;
 import com.example.springqnaapp.service.QnaService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -13,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -58,8 +61,10 @@ public class QnaController {
             Principal principal
     ) {
         String username = principal.getName();
-        QnaResponseDto response = qnaService.retrieveQna(qnaId, username);
-	    return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        var comments = qnaService.retrieveQna(qnaId, username)
+                                 .stream()
+                                 .map(CommentResponseDto::from);
+	    return ResponseEntity.status(HttpStatus.CREATED).body(comments);
     }
 
     @PostMapping("/{id}")
@@ -69,8 +74,8 @@ public class QnaController {
 			Principal principal
     ) {
 		String username = principal.getName();
-		String result = qnaService.qna(qnaId, comment, username);
-		return ResponseEntity.ok(result);
+		var result = qnaService.qna(qnaId, comment, username);
+		return ResponseEntity.ok(CommentResponseDto.from(result));
     }
 
     @DeleteMapping("/{id}")

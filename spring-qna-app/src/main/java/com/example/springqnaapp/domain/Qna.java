@@ -54,8 +54,8 @@ public class Qna {
 		return comment;
     }
 
-	public boolean isWriter(String username) {
-		return user.getUsername().equals(username);
+	public boolean accessible(String username) {
+		return user.getUsername().equals(username) || user.hasRole("ROLE_ADMIN");
 	}
 
 	public boolean commentable(String username) {
