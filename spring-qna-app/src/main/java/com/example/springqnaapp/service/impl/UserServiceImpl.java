@@ -178,11 +178,17 @@ public class UserServiceImpl implements UserService {
 
 		var roles = user.getStringRoles();
 
-		String accessToken = jwtTokenizer.createAccessToken(user.getUsername(), user.getEmail(), roles);
-		String refreshToken = jwtTokenizer.createRefreshToken(user.getUsername(), user.getEmail(), roles);
+        String refreshToken = jwtTokenizer.createRefreshToken(user.getUsername(), user.getEmail(), roles);
+        String accessToken = jwtTokenizer.createAccessToken(user.getUsername(), user.getEmail(), roles);
 
 		refreshTokenRepository.save(new RefreshToken(user.getId(), refreshToken));
 
-		return new TokensDto(accessToken, refreshToken);
+		return new TokensDto(accessToken,refreshToken);
 	}
+
+    @Override
+    @Transactional
+    public void logout(String refreshToken) {
+        refreshTokenRepository.deleteByValue(refreshToken);
+    }
 }

@@ -24,4 +24,13 @@ public class CookieHandler {
 
 		response.addCookie(cookie);
 	}
+
+    public void deleteCookie(HttpServletResponse response, String key){
+        Cookie cookie=new Cookie(key,null);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+    }
 }

@@ -10,4 +10,5 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long
 	Optional<RefreshToken> findByValue(String value);
 	@Query(value = "SELECT * FROM refresh_tokens WHERE value = ?1", nativeQuery = true)
 	Optional<RefreshToken> findByValueNative(String value);
+    void deleteByValue(String value);
 }

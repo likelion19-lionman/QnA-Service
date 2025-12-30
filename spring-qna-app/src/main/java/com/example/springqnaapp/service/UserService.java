@@ -8,6 +8,7 @@ import com.example.springqnaapp.common.dto.RegisterRequestDto;
 import jakarta.mail.MessagingException;
 
 public interface UserService {
+
     boolean checkDuplication(String username);
 
     User register(RegisterRequestDto requestDto);
@@ -16,5 +17,7 @@ public interface UserService {
 
     boolean validateAuthCode(EmailVerifyRequestDto verifyDto);
 
-	TokensDto login(String username, String password);
+    TokensDto login(String username, String password);
+
+    void logout(String refreshToken);
 }
