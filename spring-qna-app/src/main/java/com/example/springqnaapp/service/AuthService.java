@@ -7,7 +7,7 @@ import com.example.springqnaapp.domain.User;
 import com.example.springqnaapp.common.dto.RegisterRequestDto;
 import jakarta.mail.MessagingException;
 
-public interface UserService {
+public interface AuthService {
     boolean checkDuplication(String username);
 
     User register(RegisterRequestDto requestDto);

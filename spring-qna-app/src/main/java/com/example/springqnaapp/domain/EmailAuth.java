@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @Table(name = "email_auth")
 @NoArgsConstructor
-public class Auth {
+public class EmailAuth {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +30,7 @@ public class Auth {
     @Column(nullable = false)
     private LocalDateTime expireAt;
 
-    public Auth(String email, String authCode) {
+    public EmailAuth(String email, String authCode) {
         this.email = email;
         this.authCode = authCode;
         this.verified = false;
@@ -45,8 +45,8 @@ public class Auth {
     }
 
     // 인증 완료
-    public void verify() {
-        this.verified = true;
+    public boolean verify() {
+        return this.verified = true;
     }
 
     // 유효 기간 만료
