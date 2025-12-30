@@ -155,19 +155,26 @@ public class AuthServiceImpl implements AuthService {
 	@Override
 	@Transactional
 	public TokensDto login(String username, String password) {
-		User user = userRepository.findByUsername(username).orElseThrow(() ->
-				new IllegalArgumentException("존재하지 않는 회원입니다."));
+        User user = userRepository.findByUsername(username).orElseThrow(() ->
+                new IllegalArgumentException("존재하지 않는 회원입니다."));
 
-		if (!passwordEncoder.matches(password, user.getPassword()))
-			throw new IllegalArgumentException("존재하지 않는 회원입니다.");
+        if (!passwordEncoder.matches(password, user.getPassword()))
+            throw new IllegalArgumentException("존재하지 않는 회원입니다.");
 
-		var roles = user.getStringRoles();
+        var roles = user.getStringRoles();
 
-		String accessToken = jwtTokenizer.createAccessToken(user.getUsername(), user.getEmail(), roles);
-		String refreshToken = jwtTokenizer.createRefreshToken(user.getUsername(), user.getEmail(), roles);
+        String accessToken = jwtTokenizer.createAccessToken(user.getUsername(), user.getEmail(), roles);
 
-		refreshTokenRepository.save(new RefreshToken(user.getId(), refreshToken));
+        var optional = refreshTokenRepository.findByUserId(user.getId());
 
-		return new TokensDto(accessToken, refreshToken);
+        if (optional.isPresent())
+            return new TokensDto(
+                    accessToken,
+                    optional.get().getValue()
+            );
+
+        String refreshToken = jwtTokenizer.createRefreshToken(user.getUsername(), user.getEmail(), roles);
+        refreshTokenRepository.save(new RefreshToken(user.getId(), refreshToken));
+        return new TokensDto(accessToken, refreshToken);
 	}
 }

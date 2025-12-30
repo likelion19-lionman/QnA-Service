@@ -9,6 +9,7 @@ import com.example.springqnaapp.common.util.JwtTokenizer;
 import com.example.springqnaapp.common.dto.RegisterRequestDto;
 import com.example.springqnaapp.domain.RefreshToken;
 import com.example.springqnaapp.repository.RefreshTokenRepository;
+import com.example.springqnaapp.service.AuthService;
 import com.example.springqnaapp.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -34,7 +35,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
 public class AuthController {
-	private final UserService userService;
+	private final AuthService authService;
 	private final JwtTokenizer jwtTokenizer;
 	private final CookieHandler cookieHandler;
 	private final RefreshTokenRepository refreshTokenRepository;
@@ -47,7 +48,7 @@ public class AuthController {
 	public ResponseEntity<?> checkDuplication(
 			@RequestBody String username
 	) {
-        boolean checked = userService.checkDuplication(username);
+        boolean checked = authService.checkDuplication(username);
         return checked
                 ? ResponseEntity.ok().body("사용 가능한 아이디입니다.")
                 : ResponseEntity.badRequest().body("이미 존재하는 아이디입니다.");
@@ -65,7 +66,7 @@ public class AuthController {
 			EmailCodeRequestDto emailCodeRequestDto
 	) {
 		try {
-			return userService.sendAuthCode(emailCodeRequestDto) ?
+			return authService.sendAuthCode(emailCodeRequestDto) ?
 			       ResponseEntity.ok("인증코드가 전송되었습니다.") :
 			       ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("인증 코드 전송이 실패하였습니다.");
 		} catch (IllegalArgumentException e) {
@@ -91,7 +92,7 @@ public class AuthController {
 			EmailVerifyRequestDto emailVerifyRequestDto
 	) {
 		try {
-			return userService.validateAuthCode(emailVerifyRequestDto) ?
+			return authService.validateAuthCode(emailVerifyRequestDto) ?
 			       ResponseEntity.ok("이메일 인증에 성공하였습니다.") :
 			       ResponseEntity.badRequest().body("이메일 인증에 실패하였습니다.");
 		} catch (IllegalArgumentException e) {
@@ -114,8 +115,8 @@ public class AuthController {
 	) {
 		// 회원가입 처리
 		try {
-			userService.register(registerRequestDto);
-			TokensDto tokens = userService.login(
+            authService.register(registerRequestDto);
+			TokensDto tokens = authService.login(
 					registerRequestDto.username(),
 					registerRequestDto.password()
 			);
@@ -140,7 +141,7 @@ public class AuthController {
 			HttpServletResponse response
 	) {
         log.info("=== 로그인 Controller 실행중...");
-		TokensDto tokens = userService.login(
+		TokensDto tokens = authService.login(
 				loginRequestDto.username(),
 				loginRequestDto.password()
 		);

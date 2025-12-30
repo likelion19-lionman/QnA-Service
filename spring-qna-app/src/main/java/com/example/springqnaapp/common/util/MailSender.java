@@ -16,7 +16,7 @@ public class MailSender {
     private final JavaMailSender mailSender;
     private static final String BODY = "<h3>요청하신 인증 번호입니다.</h3><br/><h1>%s</h1><br/><h3>감사합니다.</h3>";
 
-    @Value( "${spring.mail.username}")
+    @Value("${spring.mail.username}")
     private String senderEmail;
 
     // 인증번호 생성 및 이메일 발송

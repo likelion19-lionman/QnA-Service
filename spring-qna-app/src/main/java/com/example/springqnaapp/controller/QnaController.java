@@ -3,7 +3,6 @@ package com.example.springqnaapp.controller;
 import com.example.springqnaapp.common.dto.CommentResponseDto;
 import com.example.springqnaapp.common.dto.QnaRequestDto;
 import com.example.springqnaapp.common.dto.QnaResponseDto;
-import com.example.springqnaapp.domain.Comment;
 import com.example.springqnaapp.service.QnaService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -15,7 +14,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -64,7 +62,7 @@ public class QnaController {
                                  .stream()
                                  .map(CommentResponseDto::from)
                                  .toList();
-	    return ResponseEntity.status(HttpStatus.CREATED).body(comments);
+	    return ResponseEntity.ok(comments);
     }
 
     @PostMapping("/{id}")
