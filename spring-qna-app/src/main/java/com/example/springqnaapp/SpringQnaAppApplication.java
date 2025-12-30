@@ -33,7 +33,7 @@ public class SpringQnaAppApplication {
 			User oldUser = userRepository.findByUsername("login")
 					.orElse(null);
 			if (oldUser == null) {
-				User user = userRepository.save(new User("login", "email@email.com", passwordEncoder.encode("1234")));
+				User user = userRepository.save(new User("login", "email@email.com", passwordEncoder.encode("123456abc!")));
 				String accessToken = jwtTokenizer.createAccessToken(user.getUsername(), user.getEmail(), Set.of("ROLE_USER"));
 				String refreshToken = jwtTokenizer.createRefreshToken(user.getUsername(), user.getEmail(), Set.of("ROLE_USER"));
 				refreshTokenRepository.save(new RefreshToken(user.getId(), refreshToken));

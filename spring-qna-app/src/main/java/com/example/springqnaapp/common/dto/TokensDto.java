@@ -1,6 +1,6 @@
 package com.example.springqnaapp.common.dto;
 
 public record TokensDto(
-		String refreshToken,
-		String accessToken
+		String accessToken,
+		String refreshToken
 ) { }

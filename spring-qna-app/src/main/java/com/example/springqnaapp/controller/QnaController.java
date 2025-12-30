@@ -64,7 +64,7 @@ public class QnaController {
         var comments = qnaService.retrieveQna(qnaId, username)
                                  .stream()
                                  .map(CommentResponseDto::from);
-	    return ResponseEntity.status(HttpStatus.CREATED).body(comments);
+	    return ResponseEntity.ok(comments);
     }
 
     @PostMapping("/{id}")
