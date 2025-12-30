@@ -7,10 +7,8 @@ import com.example.springqnaapp.common.dto.TokensDto;
 import com.example.springqnaapp.common.util.CookieHandler;
 import com.example.springqnaapp.common.util.JwtTokenizer;
 import com.example.springqnaapp.common.dto.RegisterRequestDto;
-import com.example.springqnaapp.domain.RefreshToken;
 import com.example.springqnaapp.repository.RefreshTokenRepository;
 import com.example.springqnaapp.service.AuthService;
-import com.example.springqnaapp.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,11 +22,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.example.springqnaapp.common.dto.LogoutRequestDto;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -150,41 +147,54 @@ public class AuthController {
 		return ResponseEntity.ok(tokens.refreshToken());
 	}
 
-	@PostMapping(
-			value = "/refresh",
-			consumes = "text/plain",
-			produces = "application/json"
-	)
-	public ResponseEntity<?> refresh(
-			@RequestBody
-			String invalidRefreshToken,
-			HttpServletResponse response
-	) {
-		try {
-			String cleanToken = invalidRefreshToken.trim();
+    @PostMapping(
+            value = "/refresh",
+            consumes = "text/plain",
+            produces = "application/json"
+    )
+    public ResponseEntity<?> refresh(
+            @RequestBody
+            String invalidRefreshToken,
+            HttpServletResponse response
+    ) {
+        try {
+            String cleanToken = invalidRefreshToken.trim();
 
-			var refreshToken = refreshTokenRepository.findByValue(cleanToken)
-					.orElseThrow(() -> new IllegalArgumentException("토큰이 서버에 의해 차단되었습니다."));
+            var refreshToken = refreshTokenRepository.findByValue(cleanToken)
+                    .orElseThrow(() -> new IllegalArgumentException("토큰이 서버에 의해 차단되었습니다."));
 
-			Claims claim = jwtTokenizer.parseRefreshToken(refreshToken.getValue());
+            Claims claim = jwtTokenizer.parseRefreshToken(refreshToken.getValue());
 
-			@SuppressWarnings("unchecked")
-			List<String> rolesList = claim.get("roles", List.class);
+            @SuppressWarnings("unchecked")
+            List<String> rolesList = claim.get("roles", List.class);
 
-			String newAccessToken = jwtTokenizer.createAccessToken(
-					claim.get("username", String.class),
-					claim.get("email", String.class),
-					new HashSet<>(rolesList)
-			);
+            String newAccessToken = jwtTokenizer.createAccessToken(
+                    claim.get("username", String.class),
+                    claim.get("email", String.class),
+                    new HashSet<>(rolesList)
+            );
 
-			cookieHandler.createCookie(response, "accessToken", newAccessToken);
-			return ResponseEntity.noContent().build();
-		} catch (ExpiredJwtException e) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-			                     .body("Refresh Token 만료");
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-			                     .body(e.getMessage());
-		}
-	}
+            cookieHandler.createCookie(response, "accessToken", newAccessToken);
+            return ResponseEntity.noContent().build();
+        } catch (ExpiredJwtException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Refresh Token 만료");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
+    }
+
+    @PostMapping(
+            value = "/logout",
+            consumes = "application/json"
+    )
+    public ResponseEntity<?> logout(
+            @RequestBody LogoutRequestDto request,
+            HttpServletResponse response
+    ) {
+        authService.logout(request.refreshToken());
+        cookieHandler.deleteCookie(response, "accessToken");
+        return ResponseEntity.noContent().build();
+    }
 }

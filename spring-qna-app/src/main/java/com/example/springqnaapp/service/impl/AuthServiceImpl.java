@@ -177,4 +177,10 @@ public class AuthServiceImpl implements AuthService {
         refreshTokenRepository.save(new RefreshToken(user.getId(), refreshToken));
         return new TokensDto(accessToken, refreshToken);
 	}
+
+    @Override
+    @Transactional
+    public void logout(String refreshToken) {
+        refreshTokenRepository.deleteByValue(refreshToken);
+    }
 }

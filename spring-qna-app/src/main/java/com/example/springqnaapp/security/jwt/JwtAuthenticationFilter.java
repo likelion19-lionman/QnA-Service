@@ -41,14 +41,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
+        String accessToken = null;
         String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            accessToken = authHeader.substring("Bearer ".length());
+        }
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (accessToken == null && request.getCookies() != null) {
+            for (var cookie : request.getCookies()) {
+                if ("accessToken".equals(cookie.getName())) {
+                    accessToken = cookie.getValue();
+                    break;
+                }
+            }
+        }
+        if (accessToken == null) {
             filterChain.doFilter(request, response);
             return;
         }
-
-        String accessToken = authHeader.substring("Bearer ".length());
+//        String accessToken = authHeader.substring("Bearer ".length());
         try {
             Claims claim = jwtTokenizer.parseAccessToken(accessToken);
             Set<GrantedAuthority> authorities = getAuthorities(claim);

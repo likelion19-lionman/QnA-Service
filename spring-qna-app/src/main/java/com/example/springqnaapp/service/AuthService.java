@@ -16,5 +16,7 @@ public interface AuthService {
 
     boolean validateAuthCode(EmailVerifyRequestDto verifyDto);
 
-	TokensDto login(String username, String password);
+    TokensDto login(String username, String password);
+
+    void logout(String refreshToken);
 }
