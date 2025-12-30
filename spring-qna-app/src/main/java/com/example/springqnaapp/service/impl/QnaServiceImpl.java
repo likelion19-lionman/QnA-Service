@@ -49,7 +49,7 @@ public class QnaServiceImpl implements QnaService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public Page<QnaResponseDto> retrieveQnaPage(Integer page, Integer size, String username) {
+	public Page<QnaResponseDto> pagingQna(Integer page, Integer size, String username) {
 		Pageable pageable = PageRequest.of(page, size,
 		                                   Sort.by(Sort.Direction.DESC, "createdAt"));
 		User user = userRepository.findByUsername(username)
@@ -71,7 +71,7 @@ public class QnaServiceImpl implements QnaService {
 
 	@Override
 	@Transactional
-	public Comment qna(Long id, String comment, String username) {
+	public Comment addComment(Long id, String comment, String username) {
 		Qna qna = qnaRepository.findById(id)
 		                       .orElseThrow(() -> new IllegalArgumentException("Can't find Qna"));
 
@@ -83,7 +83,7 @@ public class QnaServiceImpl implements QnaService {
 
 	@Override
 	@Transactional
-	public void delete(Long qnaId, String username) {
+	public void deleteQna(Long qnaId, String username) {
 		Qna qna = qnaRepository.findById(qnaId)
 		                       .orElseThrow(() -> new IllegalArgumentException("Can't find Qna"));
 

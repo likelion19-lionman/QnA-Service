@@ -30,7 +30,6 @@ public class QnaController {
             Principal principal,
             BindingResult bindingResult
     ) {
-
         // 제목 혹은 내용이 비어있을 경우 오류 출력
         if (bindingResult.hasErrors())
             return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
@@ -41,7 +40,7 @@ public class QnaController {
     }
 
     @GetMapping
-    public ResponseEntity<?> retrieveQnas(
+    public ResponseEntity<?> pagingQna(
             @RequestParam(defaultValue = "0")
             @Min(value = 0, message = "페이지는 0 이상 값이어야 합니다.")
             Integer page,
@@ -51,7 +50,7 @@ public class QnaController {
             Principal principal
     ) {
         String username = principal.getName();
-        Page<QnaResponseDto> qnaPage = qnaService.retrieveQnaPage(page, size, username);
+        Page<QnaResponseDto> qnaPage = qnaService.pagingQna(page, size, username);
         return ResponseEntity.ok(qnaPage);
     }
 
@@ -63,18 +62,19 @@ public class QnaController {
         String username = principal.getName();
         var comments = qnaService.retrieveQna(qnaId, username)
                                  .stream()
-                                 .map(CommentResponseDto::from);
+                                 .map(CommentResponseDto::from)
+                                 .toList();
 	    return ResponseEntity.status(HttpStatus.CREATED).body(comments);
     }
 
     @PostMapping("/{id}")
-	public ResponseEntity<?> qna(
+	public ResponseEntity<?> addComment(
 			@PathVariable(value = "id") Long qnaId,
 			@RequestBody String comment,
 			Principal principal
     ) {
 		String username = principal.getName();
-		var result = qnaService.qna(qnaId, comment, username);
+		var result = qnaService.addComment(qnaId, comment, username);
 		return ResponseEntity.ok(CommentResponseDto.from(result));
     }
 
@@ -84,7 +84,7 @@ public class QnaController {
             Principal principal
     ) {
         String username = principal.getName();
-        qnaService.delete(qnaId, username);
+        qnaService.deleteQna(qnaId, username);
         return ResponseEntity.noContent().build();
     }
 }

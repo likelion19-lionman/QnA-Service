@@ -10,11 +10,11 @@ import java.util.List;
 public interface QnaService {
 	QnaResponseDto createQna(QnaRequestDto qnaRequestDto, String username);
 
-	Page<QnaResponseDto> retrieveQnaPage(Integer page, Integer size, String username);
+	Page<QnaResponseDto> pagingQna(Integer page, Integer size, String username);
 
 	List<Comment> retrieveQna(Long id, String username);
 
-	Comment qna(Long id, String comment, String username);
+	Comment addComment(Long id, String comment, String username);
 
-	void delete(Long id, String username);
+	void deleteQna(Long id, String username);
 }
