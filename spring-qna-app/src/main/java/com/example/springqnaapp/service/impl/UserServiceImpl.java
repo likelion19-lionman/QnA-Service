@@ -23,13 +23,14 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+    private static Role DEFAULT_ROLE = null;
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenizer jwtTokenizer;
     private final AuthRepository authRepository;
     private final MailService mailService;
-    private final Role defaultRole;
+    private final RoleRepository roleRepository;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -67,12 +68,15 @@ public class UserServiceImpl implements UserService {
             throw new IllegalStateException("이미 사용 중인 이메일입니다.");
         }
 
+        if (DEFAULT_ROLE == null)
+            DEFAULT_ROLE = roleRepository.findByRole(RoleEnum.ROLE_USER).get();
+
         // 4. 사용자 정보 저장
 		User user = new User(
                 requestDto.username(),
                 requestDto.email(),
                 passwordEncoder.encode(requestDto.password()),
-                defaultRole
+                DEFAULT_ROLE
         );
 
         User savedUser = userRepository.save(user);

@@ -13,12 +13,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "roles")
 @NoArgsConstructor
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "role")
 @ToString(onlyExplicitlyIncluded = true)
 public class Role {
 	@Id
@@ -29,9 +30,6 @@ public class Role {
 	@Getter
 	@ToString.Include
 	private RoleEnum role;
-
-	@ManyToMany(mappedBy = "roles")
-	private Set<User> users;
 
     public Role(RoleEnum role) {
         this.role = role;

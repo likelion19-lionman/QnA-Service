@@ -54,10 +54,7 @@ public class User {
 	)
 	private List<Comment> comments = new ArrayList<>();
 
-	@ManyToMany(
-			fetch = FetchType.EAGER,
-			cascade = { CascadeType.PERSIST, CascadeType.MERGE }
-	)
+	@ManyToMany
 	@JoinTable(
 			name = "user_role",
 			joinColumns = { @JoinColumn(name = "user_id", nullable = false) },
@@ -82,8 +79,9 @@ public class User {
         qna.setUser(this);
     }
 
-	public boolean hasRole(RoleEnum role) {
-		return roles.contains(role);
+	public boolean hasRole(RoleEnum roleEnum) {
+        return roles.stream()
+                .anyMatch(role -> role.getRole().equals(roleEnum));
 	}
 
 	public boolean hasRole(String role) {
