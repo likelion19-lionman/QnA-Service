@@ -7,6 +7,7 @@ import com.example.springqnaapp.common.dto.TokensDto;
 import com.example.springqnaapp.common.util.JwtTokenizer;
 import com.example.springqnaapp.domain.Auth;
 import com.example.springqnaapp.domain.RefreshToken;
+import com.example.springqnaapp.domain.Role;
 import com.example.springqnaapp.domain.User;
 import com.example.springqnaapp.repository.AuthRepository;
 import com.example.springqnaapp.repository.RefreshTokenRepository;
@@ -30,6 +31,7 @@ public class UserServiceImpl implements UserService {
 	private final JwtTokenizer jwtTokenizer;
 	private final AuthRepository authRepository;
 	private final MailService mailService;
+    private final Role defaultRole;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -68,9 +70,12 @@ public class UserServiceImpl implements UserService {
         }
 
         // 4. 사용자 정보 저장
-		User user = new User(requestDto.username(),
-		                     requestDto.email(),
-		                     passwordEncoder.encode(requestDto.password()));
+		User user = new User(
+                requestDto.username(),
+                requestDto.email(),
+                passwordEncoder.encode(requestDto.password()),
+                defaultRole
+        );
 
         User savedUser = userRepository.save(user);
 
