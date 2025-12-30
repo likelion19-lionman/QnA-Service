@@ -33,7 +33,7 @@ public class AuthServiceImpl implements AuthService {
 	@Override
 	@Transactional(readOnly = true)
 	public boolean checkDuplication(String username) {
-		return userRepository.existsByUsername(username);
+		return !userRepository.existsByUsername(username);
 	}
 
     /**

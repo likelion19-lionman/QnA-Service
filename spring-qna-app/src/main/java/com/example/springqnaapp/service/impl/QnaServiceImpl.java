@@ -43,6 +43,7 @@ public class QnaServiceImpl implements QnaService {
 		qnaRepository.save(qna);
 		return new QnaResponseDto(
 				qna.getId(),
+                qna.getUser().getUsername(),
 				qna.getTitle()
 		);
 	}
