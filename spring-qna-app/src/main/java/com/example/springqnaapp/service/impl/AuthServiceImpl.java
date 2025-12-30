@@ -6,12 +6,10 @@ import com.example.springqnaapp.common.dto.RegisterRequestDto;
 import com.example.springqnaapp.common.dto.TokensDto;
 import com.example.springqnaapp.common.util.JwtTokenizer;
 import com.example.springqnaapp.common.util.MailSender;
-import com.example.springqnaapp.domain.EmailAuth;
-import com.example.springqnaapp.domain.RefreshToken;
-import com.example.springqnaapp.domain.Role;
-import com.example.springqnaapp.domain.User;
-import com.example.springqnaapp.repository.RefreshTokenRepository;
+import com.example.springqnaapp.domain.*;
 import com.example.springqnaapp.repository.EmailAuthRepository;
+import com.example.springqnaapp.repository.RefreshTokenRepository;
+import com.example.springqnaapp.repository.RoleRepository;
 import com.example.springqnaapp.repository.UserRepository;
 import com.example.springqnaapp.service.AuthService;
 import jakarta.mail.MessagingException;
@@ -23,13 +21,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
-	private final UserRepository userRepository;
-	private final RefreshTokenRepository refreshTokenRepository;
-	private final PasswordEncoder passwordEncoder;
-	private final JwtTokenizer jwtTokenizer;
-    private final Role defaultRole;
-	private final EmailAuthRepository emailAuthRepository;
-	private final MailSender mailSender;
+    private static Role DEFAULT_ROLE = null;
+    private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtTokenizer jwtTokenizer;
+    private final EmailAuthRepository emailAuthRepository;
+    private final MailSender mailSender;
+    private final RoleRepository roleRepository;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -63,12 +62,15 @@ public class AuthServiceImpl implements AuthService {
         if (userRepository.existsByEmail(requestDto.email()))
             throw new IllegalStateException("이미 사용 중인 이메일입니다.");
 
+        if (DEFAULT_ROLE == null)
+            DEFAULT_ROLE = roleRepository.findByRole(RoleEnum.ROLE_USER).get();
+
         // 4. 사용자 정보 저장
         User savedUser = userRepository.save(new User(
                 requestDto.username(),
                 requestDto.email(),
                 passwordEncoder.encode(requestDto.password()),
-                defaultRole
+                DEFAULT_ROLE
         ));
 
         // 5. 인증 정보 삭제
