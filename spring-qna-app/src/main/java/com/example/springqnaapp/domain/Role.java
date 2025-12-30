@@ -32,4 +32,8 @@ public class Role {
 
 	@ManyToMany(mappedBy = "roles")
 	private Set<User> users;
+
+    public Role(RoleEnum role) {
+        this.role = role;
+    }
 }

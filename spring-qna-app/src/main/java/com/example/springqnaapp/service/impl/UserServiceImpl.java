@@ -5,11 +5,10 @@ import com.example.springqnaapp.common.dto.EmailVerifyRequestDto;
 import com.example.springqnaapp.common.dto.RegisterRequestDto;
 import com.example.springqnaapp.common.dto.TokensDto;
 import com.example.springqnaapp.common.util.JwtTokenizer;
-import com.example.springqnaapp.domain.Auth;
-import com.example.springqnaapp.domain.RefreshToken;
-import com.example.springqnaapp.domain.User;
+import com.example.springqnaapp.domain.*;
 import com.example.springqnaapp.repository.AuthRepository;
 import com.example.springqnaapp.repository.RefreshTokenRepository;
+import com.example.springqnaapp.repository.RoleRepository;
 import com.example.springqnaapp.repository.UserRepository;
 import com.example.springqnaapp.service.MailService;
 import com.example.springqnaapp.service.UserService;
@@ -24,12 +23,13 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-	private final UserRepository userRepository;
-	private final RefreshTokenRepository refreshTokenRepository;
-	private final PasswordEncoder passwordEncoder;
-	private final JwtTokenizer jwtTokenizer;
-	private final AuthRepository authRepository;
-	private final MailService mailService;
+    private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtTokenizer jwtTokenizer;
+    private final AuthRepository authRepository;
+    private final MailService mailService;
+    private final Role defaultRole;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -68,9 +68,12 @@ public class UserServiceImpl implements UserService {
         }
 
         // 4. 사용자 정보 저장
-		User user = new User(requestDto.username(),
-		                     requestDto.email(),
-		                     passwordEncoder.encode(requestDto.password()));
+		User user = new User(
+                requestDto.username(),
+                requestDto.email(),
+                passwordEncoder.encode(requestDto.password()),
+                defaultRole
+        );
 
         User savedUser = userRepository.save(user);
 

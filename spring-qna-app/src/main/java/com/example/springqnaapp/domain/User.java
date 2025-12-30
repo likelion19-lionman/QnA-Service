@@ -65,10 +65,16 @@ public class User {
 	)
 	private Set<Role> roles = new HashSet<>();
 
-	public User(String username, String email, String password) {
+	public User(
+            String username,
+            String email,
+            String password,
+            Role role
+    ) {
 		this.username = username;
 		this.email = email;
 		this.password = password;
+        this.roles.add(role);
 	}
 
     public void addQna(Qna qna) {
