@@ -1,5 +1,3 @@
-import { refresh } from './auth';
-
 const getBaseURL = () => {
     if (typeof window !== 'undefined') {
         return `${window.location.protocol}//${window.location.hostname}:8080/api`;

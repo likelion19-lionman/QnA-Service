@@ -1,6 +1,6 @@
 import { baseRequest } from './api';
 
-export default async function query(title, comment) {
+export async function query(title, comment) {
     return await baseRequest(
         '/qna',
         'POST',
@@ -16,7 +16,7 @@ export default async function query(title, comment) {
     )
 }
 
-export default async function retrieveQnas(page, size) {
+export async function retrieveQnas(page, size) {
     return await baseRequest(
         `/qna?page=${page}&size=${size}`,
         'GET',
@@ -29,7 +29,7 @@ export default async function retrieveQnas(page, size) {
     )
 }
 
-export default async function retrieveQna(qnaId) {
+export async function retrieveQna(qnaId) {
     return await baseRequest(
         `/qna?id=${qnaId}`,
         'GET',
@@ -42,7 +42,7 @@ export default async function retrieveQna(qnaId) {
     )
 }
 
-export default async function qna(qnaId, comment) {
+export async function qna(qnaId, comment) {
     return await baseRequest(
         `/qna`,
         'POST',
@@ -57,7 +57,7 @@ export default async function qna(qnaId, comment) {
     )
 }
 
-export default async function deleteQna(qnaId) {
+export async function deleteQna(qnaId) {
     await baseRequest(
         `/qna`,
         'DELETE',
