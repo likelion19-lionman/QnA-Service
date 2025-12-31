@@ -48,7 +48,7 @@ export async function login(username, password) {
         'POST',
         {
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            'Accept': 'text/plain'
         },
         {
             'username': username,
@@ -57,9 +57,9 @@ export async function login(username, password) {
         `${username} 로그인 실패`
     );
 
-    if (res && res.refreshToken) {
-        console.log("✅ 회원가입 완료 및 refreshToken 저장");
-        localStorage.setItem('refreshToken', res.refreshToken);
+    if (res) {
+        console.log("✅ 로그인 완료 및 refreshToken -> LocalStorage 저장");
+        localStorage.setItem('refreshToken', res);
     }
 }
 

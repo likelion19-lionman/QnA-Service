@@ -4,13 +4,14 @@ services:
       context: nextjs-qna-app
       dockerfile: Dockerfile.dev
     image: qna-next:1.0
+    volumes:
+      - ./nextjs-qna-app:/app
+      - /app/node_modules
+      - /app/.next
     env_file:
       - nextjs-qna-app/.env.dev
     ports:
       - "3000:3000"
-    depends_on:
-      back:
-        condition: service_started
 
   back:
     build:

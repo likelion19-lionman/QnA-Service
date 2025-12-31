@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from "react"
-import { register } from "../api/auth"
-import EmailAuth from "./component/EmailAuth";
+import { register } from "@/app/api/auth"
+import EmailAuth from "@/app/auth/register/component/EmailAuth";
 import ValidatePW from "./component/ValidatePW";
 import ValidateUsername from "./component/ValidateUsername";
 

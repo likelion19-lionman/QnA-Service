@@ -3,7 +3,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    image: qna-next:1.0
+    image: qna-next:dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
     env_file:
       - .env.dev
     ports:

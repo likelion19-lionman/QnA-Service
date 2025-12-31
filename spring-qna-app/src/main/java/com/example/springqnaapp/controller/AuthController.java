@@ -129,7 +129,7 @@ public class AuthController {
 	@PostMapping(
 			value = "/login",
 			consumes = "application/json",
-			produces = "application/json"
+			produces = "text/plain"
 	)
 	public ResponseEntity<?> login(
 			@RequestBody

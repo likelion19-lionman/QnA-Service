@@ -24,7 +24,7 @@ export default function HomePage() {
 				</button>
 				
 				<button 
-					onClick={handleLogout}
+					// onClick={() => handleLogout()}
 					style={{ padding: '10px 20px', cursor: 'pointer' }}
 				>
 					로그아웃

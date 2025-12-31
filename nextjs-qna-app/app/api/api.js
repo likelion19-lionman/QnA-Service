@@ -35,6 +35,12 @@ export async function baseRequest(
     if (!res.ok)
         throw new Error(errMsg || '요청 실패');
 
+    if (headers.Accept && headers.Accept === "text/plain") {
+        const text = await res.text();
+        console.log('⭐️ 결과 (text):', text);
+        return text;
+    }
+    
     const data = await res.json();
     console.log('⭐️ 결과:', data); // 템플릿 리터럴 대신 , 를 써야 객체 내용이 보임
     return data;
