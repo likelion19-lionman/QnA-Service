@@ -61,6 +61,6 @@ public class Qna {
 
 	public boolean commentable(String username) {
 		User user = comments.getLast().getUser();
-		return user.getUsername().equals(username) || user.hasRole("ROLE_ADMIN");
+		return !user.getUsername().equals(username) || user.hasRole("ROLE_ADMIN");
 	}
 }

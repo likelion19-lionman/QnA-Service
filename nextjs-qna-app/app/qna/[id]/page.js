@@ -1,7 +1,12 @@
 'use client'
 
+import { use } from 'react';
+import CommentForm from '@/app/qna/[id]/component/CommentForm';
+
 export default function QnaPage({ params }) {
-    return <></>;
+    const { id } = use(params);
+
+    return <CommentForm qnaId = { id } />;
     // const {qnaId} = params;
     // const [qna, setQna] = useState(null);
     // const [loading, setLoading] = useState(true);

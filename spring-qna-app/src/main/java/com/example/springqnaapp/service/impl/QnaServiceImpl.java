@@ -79,6 +79,7 @@ public class QnaServiceImpl implements QnaService {
 		Qna qna = qnaRepository.findById(id)
 		                       .orElseThrow(() -> new IllegalArgumentException("Can't find Qna"));
 
+        // accessible = true, commentable = true
 		if (!(qna.accessible(username) && qna.commentable(username)))
 			throw new RuntimeException("질문을 할 수 없습니다. 답변을 받은 후 질문을 다시 해주세요.");
 

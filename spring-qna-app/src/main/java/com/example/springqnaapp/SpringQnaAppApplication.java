@@ -41,25 +41,45 @@ public class SpringQnaAppApplication {
                     )
             );
 
+            var userRole = roleRepository.findByRole(RoleEnum.ROLE_USER).get();
             var adminRole = roleRepository.findByRole(RoleEnum.ROLE_ADMIN).get();
 
             User user = userRepository.save(
                     new User("login",
                             "email@email.com",
                             passwordEncoder.encode("123456abc!"),
+                            userRole
+                    )
+            );
+
+            User admin = userRepository.save(
+                    new User("admin",
+                            "admin@email.com",
+                            passwordEncoder.encode("admin123!"),
                             adminRole
                     )
             );
+
 
             String accessToken = jwtTokenizer.createAccessToken(user.getUsername(), user.getEmail(), user.getStringRoles());
             String refreshToken = jwtTokenizer.createRefreshToken(user.getUsername(), user.getEmail(), user.getStringRoles());
 
             refreshTokenRepository.save(new RefreshToken(user.getId(), refreshToken));
 
-            System.out.println("\n\n\n");
-            System.out.println(accessToken);
-            System.out.println(refreshToken);
-            System.out.println("\n\n\n");
+            System.out.println("========== User =========");
+            System.out.println("accessToken : " + accessToken);
+            System.out.println("refreshToken : " + refreshToken);
+            System.out.println("=========================");
+
+            String adminAccessToken = jwtTokenizer.createAccessToken(admin.getUsername(), admin.getEmail(), admin.getStringRoles());
+            String adminRefreshToken = jwtTokenizer.createRefreshToken(admin.getUsername(), admin.getEmail(), admin.getStringRoles());
+
+            refreshTokenRepository.save(new RefreshToken(admin.getId(), adminRefreshToken));
+
+            System.out.println("========== Admin =========");
+            System.out.println("accessToken : " +adminAccessToken);
+            System.out.println("refreshToken : " + adminRefreshToken);
+            System.out.println("=========================");
 		};
 	}
 }

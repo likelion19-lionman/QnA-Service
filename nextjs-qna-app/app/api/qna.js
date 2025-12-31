@@ -42,17 +42,15 @@ export async function retrieveQna(qnaId) {
     )
 }
 
-export async function qna(qnaId, comment) {
+export async function addComment(qnaId, comment) {
     return await baseRequest(
-        `/qna`,
+        `/qna/${qnaId}`,
         'POST',
         {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         },
-        {
-            comment: comment
-        },
+        comment,
         `${qnaId} 에 댓글 작성을 실패했습니다.`
     )
 }

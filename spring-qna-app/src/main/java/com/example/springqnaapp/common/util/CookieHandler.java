@@ -9,7 +9,7 @@ public class CookieHandler {
 	private static final boolean XSS_ATTACK_SECURE = true;
 	private static final boolean ONLY_HTTPS = true;
 	private static final String VALID_PARENT_PATH = "/";
-	private static final int MAX_AGE_SECONDS = 420;
+	private static final int MAX_AGE_SECONDS = 42000;
 
 	public void createCookie(
 			HttpServletResponse response,
