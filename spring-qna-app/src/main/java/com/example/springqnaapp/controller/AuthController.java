@@ -8,27 +8,31 @@ import com.example.springqnaapp.common.util.CookieHandler;
 import com.example.springqnaapp.common.util.JwtTokenizer;
 import com.example.springqnaapp.common.dto.RegisterRequestDto;
 import com.example.springqnaapp.repository.RefreshTokenRepository;
-import com.example.springqnaapp.service.UserService;
+import com.example.springqnaapp.service.AuthService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.example.springqnaapp.common.dto.LogoutRequestDto;
 
-import java.util.Set;
+import java.util.HashSet;
+import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
 public class AuthController {
-	private final UserService userService;
+	private final AuthService authService;
 	private final JwtTokenizer jwtTokenizer;
 	private final CookieHandler cookieHandler;
 	private final RefreshTokenRepository refreshTokenRepository;
@@ -38,11 +42,14 @@ public class AuthController {
 			consumes = "text/plain",
 			produces = "application/json"
 	)
-	public ResponseEntity<Boolean> checkDuplication(
+	public ResponseEntity<?> checkDuplication(
 			@RequestBody String username
 	) {
-		return ResponseEntity.ok(userService.checkDuplication(username));
-	}
+        boolean checked = authService.checkDuplication(username);
+        return checked
+                ? ResponseEntity.ok().body("사용 가능한 아이디입니다.")
+                : ResponseEntity.badRequest().body("이미 존재하는 아이디입니다.");
+    }
 
 	// 인증번호 전송
 	@PostMapping(
@@ -56,7 +63,7 @@ public class AuthController {
 			EmailCodeRequestDto emailCodeRequestDto
 	) {
 		try {
-			return userService.sendAuthCode(emailCodeRequestDto) ?
+			return authService.sendAuthCode(emailCodeRequestDto) ?
 			       ResponseEntity.ok("인증코드가 전송되었습니다.") :
 			       ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("인증 코드 전송이 실패하였습니다.");
 		} catch (IllegalArgumentException e) {
@@ -82,7 +89,7 @@ public class AuthController {
 			EmailVerifyRequestDto emailVerifyRequestDto
 	) {
 		try {
-			return userService.validateAuthCode(emailVerifyRequestDto) ?
+			return authService.validateAuthCode(emailVerifyRequestDto) ?
 			       ResponseEntity.ok("이메일 인증에 성공하였습니다.") :
 			       ResponseEntity.badRequest().body("이메일 인증에 실패하였습니다.");
 		} catch (IllegalArgumentException e) {
@@ -105,8 +112,8 @@ public class AuthController {
 	) {
 		// 회원가입 처리
 		try {
-			userService.register(registerRequestDto);
-			TokensDto tokens = userService.login(
+            authService.register(registerRequestDto);
+			TokensDto tokens = authService.login(
 					registerRequestDto.username(),
 					registerRequestDto.password()
 			);
@@ -130,50 +137,64 @@ public class AuthController {
 			LoginRequestDto loginRequestDto,
 			HttpServletResponse response
 	) {
-		TokensDto tokens = userService.login(
+        log.info("=== 로그인 Controller 실행중...");
+		TokensDto tokens = authService.login(
 				loginRequestDto.username(),
 				loginRequestDto.password()
 		);
+        log.info("=== 로그인 Controller 실행 완료 {}", tokens);
 		cookieHandler.createCookie(response, "accessToken", tokens.accessToken());
 		return ResponseEntity.ok(tokens.refreshToken());
 	}
 
-	@PostMapping(
-			value = "/refresh",
-			consumes = "text/plain",
-			produces = "application/json"
-	)
-	public ResponseEntity<?> refresh(
-			@RequestBody
-			String invalidRefreshToken,
-			HttpServletResponse response
-	) {
-		try {
-			// 서버가 통제권을 가지고 있게 함. refresh 가 탈취 됐다면 refresh 를 DB 에서 삭제시켜
-			// 해당 로직으로 인해 막게 끔 해야 함.
-			var refreshToken = refreshTokenRepository.findByValue(invalidRefreshToken)
-					.orElseThrow(() -> new IllegalArgumentException("토큰이 서버에 의해 차단되었습니다."));
+    @PostMapping(
+            value = "/refresh",
+            consumes = "text/plain",
+            produces = "application/json"
+    )
+    public ResponseEntity<?> refresh(
+            @RequestBody
+            String invalidRefreshToken,
+            HttpServletResponse response
+    ) {
+        try {
+            String cleanToken = invalidRefreshToken.trim();
 
-			// 만료되었다면 catch 문으로
-			Claims claim = jwtTokenizer.parseRefreshToken(refreshToken.getValue());
+            var refreshToken = refreshTokenRepository.findByValue(cleanToken)
+                    .orElseThrow(() -> new IllegalArgumentException("토큰이 서버에 의해 차단되었습니다."));
 
-			// 제대로 파싱이 되었다면 AccessToken 을 만듦
-			@SuppressWarnings("unchecked")
-			String newAccessToken = jwtTokenizer.createAccessToken(
-					claim.get("username", String.class),
-					claim.get("email", String.class),
-					(Set<String>) claim.get("roles", Set.class)
-			);
+            Claims claim = jwtTokenizer.parseRefreshToken(refreshToken.getValue());
 
-			// 쿠키를 구워 반환
-			cookieHandler.createCookie(response, "accessToken", newAccessToken);
-			return ResponseEntity.noContent().build();
-		} catch (ExpiredJwtException e) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-			                     .body("Refresh Token 만료");
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-			                     .body(e.getMessage());
-		}
-	}
+            @SuppressWarnings("unchecked")
+            List<String> rolesList = claim.get("roles", List.class);
+
+            String newAccessToken = jwtTokenizer.createAccessToken(
+                    claim.get("username", String.class),
+                    claim.get("email", String.class),
+                    new HashSet<>(rolesList)
+            );
+
+            cookieHandler.createCookie(response, "accessToken", newAccessToken);
+            return ResponseEntity.noContent().build();
+        } catch (ExpiredJwtException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Refresh Token 만료");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
+    }
+
+    @PostMapping(
+            value = "/logout",
+            consumes = "application/json"
+    )
+    public ResponseEntity<?> logout(
+            @RequestBody LogoutRequestDto request,
+            HttpServletResponse response
+    ) {
+        authService.logout(request.refreshToken());
+        cookieHandler.deleteCookie(response, "accessToken");
+        return ResponseEntity.noContent().build();
+    }
 }

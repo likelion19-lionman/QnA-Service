@@ -3,7 +3,7 @@ package com.example.springqnaapp.config.properties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.util.Properties;
 
-@ConfigurationProperties(prefix = "spring.mail.properties.smtp")
+@ConfigurationProperties(prefix = "spring.mail.properties.mail.smtp")
 public record MailSmtpProperties(
 		boolean auth,
 		boolean starttlsEnable,

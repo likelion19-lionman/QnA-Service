@@ -2,7 +2,6 @@ package com.example.springqnaapp.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -55,10 +54,7 @@ public class User {
 	)
 	private List<Comment> comments = new ArrayList<>();
 
-	@ManyToMany(
-			fetch = FetchType.EAGER,
-			cascade = { CascadeType.PERSIST, CascadeType.MERGE }
-	)
+	@ManyToMany
 	@JoinTable(
 			name = "user_role",
 			joinColumns = { @JoinColumn(name = "user_id", nullable = false) },
@@ -66,10 +62,16 @@ public class User {
 	)
 	private Set<Role> roles = new HashSet<>();
 
-	public User(String username, String email, String password) {
+	public User(
+            String username,
+            String email,
+            String password,
+            Role role
+    ) {
 		this.username = username;
 		this.email = email;
 		this.password = password;
+        this.roles.add(role);
 	}
 
     public void addQna(Qna qna) {
@@ -77,8 +79,9 @@ public class User {
         qna.setUser(this);
     }
 
-	public boolean hasRole(RoleEnum role) {
-		return roles.contains(role);
+	public boolean hasRole(RoleEnum roleEnum) {
+        return roles.stream()
+                .anyMatch(role -> role.getRole().equals(roleEnum));
 	}
 
 	public boolean hasRole(String role) {

@@ -1,5 +1,6 @@
 package com.example.springqnaapp.controller;
 
+import com.example.springqnaapp.common.dto.CommentResponseDto;
 import com.example.springqnaapp.common.dto.QnaRequestDto;
 import com.example.springqnaapp.common.dto.QnaResponseDto;
 import com.example.springqnaapp.service.QnaService;
@@ -27,7 +28,6 @@ public class QnaController {
             Principal principal,
             BindingResult bindingResult
     ) {
-
         // 제목 혹은 내용이 비어있을 경우 오류 출력
         if (bindingResult.hasErrors())
             return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
@@ -38,7 +38,7 @@ public class QnaController {
     }
 
     @GetMapping
-    public ResponseEntity<?> retrieveQnas(
+    public ResponseEntity<?> pagingQna(
             @RequestParam(defaultValue = "0")
             @Min(value = 0, message = "페이지는 0 이상 값이어야 합니다.")
             Integer page,
@@ -48,7 +48,7 @@ public class QnaController {
             Principal principal
     ) {
         String username = principal.getName();
-        Page<QnaResponseDto> qnaPage = qnaService.retrieveQnaPage(page, size, username);
+        Page<QnaResponseDto> qnaPage = qnaService.pagingQna(page, size, username);
         return ResponseEntity.ok(qnaPage);
     }
 
@@ -58,19 +58,22 @@ public class QnaController {
             Principal principal
     ) {
         String username = principal.getName();
-        QnaResponseDto response = qnaService.retrieveQna(qnaId, username);
-	    return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        var comments = qnaService.retrieveQna(qnaId, username)
+                                 .stream()
+                                 .map(CommentResponseDto::from)
+                                 .toList();
+	    return ResponseEntity.ok(comments);
     }
 
     @PostMapping("/{id}")
-	public ResponseEntity<?> qna(
+	public ResponseEntity<?> addComment(
 			@PathVariable(value = "id") Long qnaId,
 			@RequestBody String comment,
 			Principal principal
     ) {
 		String username = principal.getName();
-		String result = qnaService.qna(qnaId, comment, username);
-		return ResponseEntity.ok(result);
+		var result = qnaService.addComment(qnaId, comment, username);
+		return ResponseEntity.ok(CommentResponseDto.from(result));
     }
 
     @DeleteMapping("/{id}")
@@ -79,7 +82,7 @@ public class QnaController {
             Principal principal
     ) {
         String username = principal.getName();
-        qnaService.delete(qnaId, username);
+        qnaService.deleteQna(qnaId, username);
         return ResponseEntity.noContent().build();
     }
 }

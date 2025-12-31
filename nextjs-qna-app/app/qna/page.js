@@ -1,10 +1,9 @@
 'use client'
+
 import { useRouter } from "next/navigation";
 import Qnas from "./component/QnaList";
 
-
 export default function qnaHome() {
-
     const router = useRouter();
 
     return(
@@ -16,5 +15,4 @@ export default function qnaHome() {
             </button>
         </div>
     )
-
 }

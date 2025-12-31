@@ -6,11 +6,9 @@ import EmailAuth from "./component/EmailAuth";
 import ValidatePW from "./component/ValidatePW";
 import ValidateUsername from "./component/ValidateUsername";
 
-
-
-export default function RegisterPage(){
-    const[username, setUsername] = useState('');
-    const[usernameVerified, setUsernameVerified] = useState(false)
+export default function RegisterPage() {
+    const [username, setUsername] = useState('');
+    const [usernameVerified, setUsernameVerified] = useState(false)
 
     const [email, setEmail] = useState('');
     const [emailVerified, setEmailVerified] = useState(false);

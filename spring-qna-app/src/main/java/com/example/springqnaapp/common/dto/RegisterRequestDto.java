@@ -1,11 +1,11 @@
 package com.example.springqnaapp.common.dto;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 public record RegisterRequestDto(
-		@Min(value = 4, message = "유저이름은 최소 4자 이상입니다.")
+		@Size(min = 4, message = "유저이름은 최소 4자 이상입니다.")
 		String username,
 
 		@Email(message = "이메일 형태가 올바르지 않습니다.")
@@ -15,8 +15,8 @@ public record RegisterRequestDto(
 		)
 		String email,
 
-		@Min(
-				value = 8,
+		@Size(
+				min = 8,
 				message = "비밀번호는 최소 8자 이상입니다."
 		)
 		@Pattern(
