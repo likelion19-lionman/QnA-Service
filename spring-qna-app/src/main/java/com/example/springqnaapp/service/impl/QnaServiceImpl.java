@@ -34,6 +34,9 @@ public class QnaServiceImpl implements QnaService {
 		                          .orElseThrow(() ->
 				                                       new IllegalArgumentException("Can't find user"));
 
+        if (!user.hasRole("ROLE_USER"))
+            throw new RuntimeException("권한이 없습니다.");
+
 		Qna qna = new Qna(user, qnaRequestDto.title());
 		Comment comment = new Comment(qnaRequestDto.comment());
 
