@@ -27,7 +27,7 @@ import com.example.springqnaapp.common.dto.LogoutRequestDto;
 import java.util.HashSet;
 import java.util.List;
 
-@Slf4j
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
@@ -137,12 +137,12 @@ public class AuthController {
 			LoginRequestDto loginRequestDto,
 			HttpServletResponse response
 	) {
-        log.info("=== 로그인 Controller 실행중...");
+
 		TokensDto tokens = authService.login(
 				loginRequestDto.username(),
 				loginRequestDto.password()
 		);
-        log.info("=== 로그인 Controller 실행 완료 {}", tokens);
+
 		cookieHandler.createCookie(response, "accessToken", tokens.accessToken());
 		return ResponseEntity.ok(tokens.refreshToken());
 	}
