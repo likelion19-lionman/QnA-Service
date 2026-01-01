@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = { "username", "email" })
+@Slf4j
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -80,12 +82,20 @@ public class User {
     }
 
 	public boolean hasRole(RoleEnum roleEnum) {
+		log.info("hasRole(RoleEnum roleEnum), {}", roles.stream()
+		                  .anyMatch(role -> role.getRole().equals(roleEnum)));
         return roles.stream()
                 .anyMatch(role -> role.getRole().equals(roleEnum));
 	}
 
 	public boolean hasRole(String role) {
+		log.info("들어온 변수: {}", role);
+		for (Role iter : this.roles)
+			log.info("가지고 있는 role: {}", iter);
+
 		RoleEnum roleEnum = RoleEnum.findByRole(role);
+
+		log.info("찾은 RoleEnum: {}", roleEnum);
 		if (roleEnum != null) return hasRole(roleEnum);
 		return false;
 	}

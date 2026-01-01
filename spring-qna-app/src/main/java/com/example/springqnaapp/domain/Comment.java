@@ -37,7 +37,9 @@ public class Comment {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    public Comment(String comment) {
+    public Comment(String comment, User user, Qna qna) {
         this.comment = comment;
+		this.user = user;
+		this.qna = qna;
     }
 }

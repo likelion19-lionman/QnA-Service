@@ -1,3 +1,4 @@
+import { deleteReactDebugChannelForHtmlRequest } from 'next/dist/server/dev/debug-channel';
 import { baseRequest } from './api';
 
 export async function query(title, comment) {
@@ -47,12 +48,12 @@ export async function addComment(qnaId, comment) {
         `/qna/${qnaId}`,
         'POST',
         {
-            'Content-Type': 'application/json',
+            'Content-Type': 'text/plain',
             'Accept': 'application/json'
         },
         comment,
         `${qnaId} 에 댓글 작성을 실패했습니다.`
-    )
+    );
 }
 
 export async function deleteQna(qnaId) {

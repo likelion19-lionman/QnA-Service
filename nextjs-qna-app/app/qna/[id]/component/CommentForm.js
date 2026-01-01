@@ -9,7 +9,7 @@ export default function CommentForm({ qnaId }) {
 
     const submit = async (e) => {
         e.preventDefault();
-        const trimmed = comment.trim();
+        const trimmed = comment.replace(/^[\s"']+|[\s"']+$/g, '').trim();
         if (!trimmed) return;
 
         try {
