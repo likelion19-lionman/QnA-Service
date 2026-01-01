@@ -56,8 +56,13 @@ public class QnaServiceImpl implements QnaService {
 	public Page<QnaResponseDto> pagingQna(Integer page, Integer size, String username) {
 		Pageable pageable = PageRequest.of(page, size,
 		                                   Sort.by(Sort.Direction.DESC, "createdAt"));
+
 		User user = userRepository.findByUsername(username)
 		                          .orElseThrow(() -> new IllegalArgumentException("Can't find user"));
+
+		if (user.hasRole("ADMIN_ROLE"))
+			return qnaRepository.findAll(pageable)
+			                    .map(QnaResponseDto::from);
 
 		return qnaRepository
 				.findByUserId(user.getId(), pageable)
@@ -69,7 +74,10 @@ public class QnaServiceImpl implements QnaService {
 	public List<Comment> retrieveQna(Long qnaId, String username) {
 		Qna qna = qnaRepository.findById(qnaId)
 		                       .orElseThrow(() -> new IllegalArgumentException("Can't find Qna"));
-		if (!qna.accessible(username)) throw new RuntimeException("열람 권한이 없습니다.");
+
+		if (!qna.accessible(username))
+			throw new RuntimeException("열람 권한이 없습니다.");
+
 		return qna.getComments();
 	}
 
