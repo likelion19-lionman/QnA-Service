@@ -5,12 +5,14 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Entity
 @Table(name = "qnas")
 @Getter
@@ -48,19 +50,19 @@ public class Qna {
         this.title = title;
     }
 
-    public Comment addComment(Comment comment) {
-        comment.setUser(this.user);
-        comments.add(comment);
-        comment.setQna(this);
-        return comment;
-    }
-
 	public boolean accessible(String username) {
-		return user.getUsername().equals(username) || user.hasRole("ROLE_ADMIN");
+		return user.hasRole("ROLE_ADMIN")
+		       || user.getUsername().equals(username);
 	}
 
-	public boolean commentable(String username) {
-		User user = comments.getLast().getUser();
-		return user.getUsername().equals(username) || user.hasRole("ROLE_ADMIN");
+	public boolean commentable(User curUser) {
+		String curUsername = curUser.getUsername();
+		String writer = this.user.getUsername();
+		User lastWriter = comments.getLast().getUser();
+
+		log.info("lastWriter.hasRole() : {}", lastWriter.hasRole("ROLE_ADMIN"));
+		return curUser.hasRole("ROLE_ADMIN")
+		       || (writer.equals(curUsername)
+		           && !lastWriter.getUsername().equals(curUsername));
 	}
 }

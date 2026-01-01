@@ -7,6 +7,7 @@ import com.example.springqnaapp.service.QnaService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/qna")
@@ -65,14 +67,18 @@ public class QnaController {
 	    return ResponseEntity.ok(comments);
     }
 
-    @PostMapping("/{id}")
+    @PostMapping(
+            value = "/{id}",
+            consumes = "text/plain",
+            produces = "application/json"
+    )
 	public ResponseEntity<?> addComment(
 			@PathVariable(value = "id") Long qnaId,
 			@RequestBody String comment,
 			Principal principal
     ) {
 		String username = principal.getName();
-		var result = qnaService.addComment(qnaId, comment, username);
+		var result = qnaService.addComment(qnaId, comment.replace("\"", ""), username);
 		return ResponseEntity.ok(CommentResponseDto.from(result));
     }
 

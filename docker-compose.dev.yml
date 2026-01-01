@@ -11,9 +11,6 @@ services:
       - .env.dev
     ports:
       - "3000:3000"
-    depends_on:
-      back:
-        condition: service_started
 
   db:
     image: mysql:8.0
