@@ -1,3 +1,5 @@
+'use client'
+
 import { useRouter } from 'next/navigation';
 
 export default function HomePage() {
@@ -5,7 +7,7 @@ export default function HomePage() {
 
 	return <>
 		<div style={{ padding: '40px', textAlign: 'center' }}>
-			<h1>홈페이지</h1>
+			<h1>홈페이지 바뀜</h1>
 			<div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '20px' }}>
 				<button 
 					onClick={() => router.push('/auth/login')}
@@ -22,7 +24,7 @@ export default function HomePage() {
 				</button>
 				
 				<button 
-					onClick={handleLogout}
+					// onClick={handleLogout}
 					style={{ padding: '10px 20px', cursor: 'pointer' }}
 				>
 					로그아웃

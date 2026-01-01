@@ -23,23 +23,29 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 	@Override
 	public void commence(HttpServletRequest request,
 	                     HttpServletResponse response,
-	                     AuthenticationException authException) throws IOException, ServletException {
-		String error = request.getParameter("error");
+	                     AuthenticationException authException
+	) throws IOException, ServletException {
 
-		if (error == null)
-			log.error("Commence Occurred ::  "+ authException.getMessage());
+		// 1. getParameter가 아니라 getAttribute로 가져와야 합니다.
+		Object error = request.getAttribute("error");
+		JwtErrorCode errorCode;
 
-		JwtErrorCode jwtErrorCode = JwtErrorCode.findByCode(error);
+		// 2. null 체크 및 캐스팅 로직
+		if (error instanceof JwtErrorCode) {
+			errorCode = (JwtErrorCode) error;
+		} else {
+			// 토큰이 아예 없거나 알 수 없는 에러인 경우의 기본값
+			errorCode = JwtErrorCode.JWT_UNKNOWN;
+		}
 
-		if (jwtErrorCode == null || jwtErrorCode == JwtErrorCode.JWT_UNKNOWN)
-			log.error("Commence Occurred ::  "+ authException.getMessage());
+		log.error("인증 실패 응답 송신 :: 코드: {}, 메시지: {}", errorCode.getCode(), authException.getMessage());
 
 		response.setContentType("application/json;charset=UTF-8");
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-		HashMap<String,Object> errorInfo = new HashMap<>();
-		errorInfo.put("message", jwtErrorCode.getMessage());
-		errorInfo.put("code", jwtErrorCode.getCode());
+		HashMap<String, Object> errorInfo = new HashMap<>();
+		errorInfo.put("message", errorCode.getMessage());
+		errorInfo.put("code", errorCode.getCode());
 
 		String responseJson = objectMapper.writeValueAsString(errorInfo);
 		response.getWriter().write(responseJson);

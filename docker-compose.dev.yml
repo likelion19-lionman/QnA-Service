@@ -4,13 +4,37 @@ services:
       context: nextjs-qna-app
       dockerfile: Dockerfile.dev
     image: qna-next:1.0
+    volumes:
+      - ./nextjs-qna-app/app:/app/app/
+      - /app/node_modules
     env_file:
-      - nextjs-qna-app/.env.dev
+      - .env.dev
     ports:
       - "3000:3000"
     depends_on:
       back:
         condition: service_started
+
+  db:
+    image: mysql:8.0
+    env_file:
+      - spring-qna-app/.env.dev
+    ports:
+      - "3306:3306"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 512M
+        reservations:
+          cpus: '1'
+          memory: 256M
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+      start_period: 5s
 
   back:
     build:
@@ -24,16 +48,3 @@ services:
     depends_on:
       db:
         condition: service_healthy
-
-  db:
-    image: mysql:8.0
-    env_file:
-      - spring-qna-app/.env.dev
-    ports:
-      - "3306:3306"
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 5s
-      timeout: 10s
-      retries: 10
-      start_period: 5s

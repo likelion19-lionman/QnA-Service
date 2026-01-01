@@ -1,6 +1,8 @@
 package com.example.springqnaapp.config;
 
+import com.example.springqnaapp.security.CustomAuthenticationEntryPoint;
 import com.example.springqnaapp.security.jwt.JwtAuthenticationFilter;
+import com.example.springqnaapp.security.transform.CookieToAuthHeaderFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -20,7 +22,9 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(
 			HttpSecurity http,
-			JwtAuthenticationFilter jwtAuthenticationFilter
+			JwtAuthenticationFilter jwtAuthenticationFilter,
+			CookieToAuthHeaderFilter cookieToAuthHeaderFilter,
+			CustomAuthenticationEntryPoint customAuthenticationEntryPoint
 	) {
 		return http
 				.csrf(AbstractHttpConfigurer::disable)
@@ -36,6 +40,10 @@ public class SecurityConfig {
 				.cors(cors -> cors
 						.configurationSource(corsConfigurationSource())
 				)
+				.exceptionHandling(conf -> conf
+						.authenticationEntryPoint(customAuthenticationEntryPoint)
+				)
+				.addFilterBefore(cookieToAuthHeaderFilter, UsernamePasswordAuthenticationFilter.class)
 				.addFilterAt(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 				.httpBasic(AbstractHttpConfigurer::disable)
 				.formLogin(AbstractHttpConfigurer::disable)
