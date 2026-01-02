@@ -30,7 +30,9 @@ jobs:
             echo "연결 성공"
             cd ~/app
 
-            echo "${{ secrets.ENVFILE }}" > .env
+            cat <<EOF > .env
+            ${{ secrets.ENV_FILE }}
+            EOF
 
             docker compose down -v
             docker compose pull
