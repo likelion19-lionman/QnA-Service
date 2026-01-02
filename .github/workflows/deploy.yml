@@ -32,6 +32,14 @@ jobs:
 
             cat <<EOF > .env
             ${{ secrets.ENVFILE }}
+            MYSQL_ROOT_PASSWORD=${{ MYSQL_ROOT_PASSWORD }}
+            MYSQL_DATABASE=${{ MYSQL_DATABASE }}
+            MYSQL_USER=${{ MYSQL_USER }}
+            MYSQL_PASSWORD=${{ MYSQL_PASSWORD }}
+            JWT_ACCESS_SECRET_KEY=${{ JWT_ACCESS_SECRET_KEY }}
+            JWT_REFRESH_SECRET_KEY=${{ JWT_REFRESH_SECRET_KEY }}
+            SPRING_MAIL_USERNAME=${{ SPRING_MAIL_USERNAME }}
+            SPRING_MAIL_PASSWORD=${{ SPRING_MAIL_PASSWORD }}
             EOF
 
             docker compose down -v

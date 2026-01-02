@@ -2,6 +2,8 @@ services:
   front:
     platform: linux/amd64
     image: seonghun120614/qna-next:1.0
+    environment:
+      - NODE_ENV=production
     env_file:
       - .env
     ports:
@@ -10,6 +12,14 @@ services:
   back:
     platform: linux/amd64
     image: seonghun120614/qna-spring:1.0
+    environment:
+      - JWT_ACCESS_SECRET_KEY=${JWT_ACCESS_SECRET_KEY}
+      - JWT_REFRESH_SECRET_KEY=${JWT_REFRESH_SECRET_KEY}
+      - SPRING_MAIL_USERNAME=${SPRING_MAIL_USERNAME}
+      - SPRING_MAIL_PASSWORD=${SPRING_MAIL_PASSWORD}
+      - SPRING_DATASOURCE_USERNAME=${MYSQL_USER}
+      - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD}
+
     env_file:
       - .env
     depends_on:
@@ -19,6 +29,11 @@ services:
   db:
     platform: linux/amd64
     image: seonghun120614/qna-mysql:1.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     env_file:
       - .env
     deploy:
