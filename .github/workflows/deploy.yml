@@ -18,6 +18,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            echo "연결 성공"
             mkdir -p ~/app
             cd ~/app
 
