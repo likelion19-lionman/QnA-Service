@@ -23,7 +23,22 @@ export default function RegisterPage() {
     e.preventDefault();
     if (!usernameVerified) return alert("아이디 중복확인을 해주세요.");
     if (!emailVerified) return alert("이메일 인증을 완료해주세요.");
-    await register(username, email, password);
+    if (!password || password.trim().length === 0)
+      return alert("비밀번호를 입력해주세요.");
+    if (!confirm || confirm.trim().length === 0)
+      return alert("비밀번호 확인을 입력해주세요.");
+    if (password !== confirm) return alert("비밀번호가 일치하지 않습니다.");
+
+    try {
+      const res = await register(username, email, password);
+
+      if (res) {
+        alert("회원가입이 완료되었습니다.");
+        router.push("/");
+      }
+    } catch (e) {
+      alert(e.message || "회원가입에 실패하였습니다.");
+    }
   };
 
   const goHome = () => {

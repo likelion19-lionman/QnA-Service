@@ -128,8 +128,9 @@ public class AuthServiceImpl implements AuthService {
      * 검증 순서:<br/>
      * 1. 인증 정보 존재 확인<br/>
      * 2. 만료 여부 확인<br/>
-     * 3. 인증번호 일치 여부 확인<br/>
-     * 4. 인증 완료 처리 (verified = true)<br/>
+     * 3. 6자리 입력 확인
+     * 4. 인증번호 일치 여부 확인<br/>
+     * 5. 인증 완료 처리 (verified = true)<br/>
      */
 	@Override
     @Transactional
@@ -144,11 +145,16 @@ public class AuthServiceImpl implements AuthService {
             throw new IllegalStateException("인증 시간이 만료되었습니다. 다시 시도해주세요.");
         }
 
-        // 3. 인증번호 일치 여부 확인
+        // 3. 6자리 입력 확인
+        if (verifyDto.authCode().length() != 6) {
+            throw new IllegalArgumentException("인증번호는 6자리입니다.");
+        }
+
+        // 4. 인증번호 일치 여부 확인
         if (!auth.getAuthCode().equals(verifyDto.authCode()))
             return false;
 
-        // 4. 인증 완료 처리
+        // 5. 인증 완료 처리
         return auth.verify();
 	}
 

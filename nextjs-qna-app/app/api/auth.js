@@ -10,32 +10,49 @@ export async function checkDuplication(username) {
       Accept: "application/json",
     },
     body: username,
-    credentials: "include",
   });
+
+  if (!res.ok) throw new Error((await res.text()) || "아이디 중복 확인 실패");
 
   return res.ok;
 }
 
 export async function register(username, email, password) {
-  const res = await baseRequest(
-    "/auth/register",
-    "POST",
-    {
+  const API_BASE_URL = getBaseURL();
+
+  const res = await fetch(`${API_BASE_URL}/auth/register`, {
+    method: "POST",
+    headers: {
       "Content-Type": "application/json",
-      Accept: "application/json",
+      Accept: "text/plain",
     },
-    {
+    body: JSON.stringify({
       username: username,
       email: email,
       password: password,
-    },
-    `회원가입 불가`
-  );
+    }),
+    credentials: "include",
+  });
 
-  if (res && res.refreshToken) {
-    console.log("✅ 회원가입 완료 및 refreshToken 저장");
-    localStorage.setItem("refreshToken", res.refreshToken);
+  // 에러 응답 처리
+  if (!res.ok) {
+    try {
+      const errorData = await res.json();
+      throw new Error(errorData.message || "회원가입에 실패하였습니다.");
+    } catch (parseError) {
+      throw new Error("회원가입에 실패하였습니다.");
+    }
   }
+
+  const refreshToken = await res.text();
+
+  if (refreshToken) {
+    console.log("✅ 회원가입 완료 및 refreshToken 저장");
+    localStorage.setItem("refreshToken", refreshToken);
+    return true;
+  }
+
+  return false;
 }
 
 export async function login(username, password) {
@@ -60,34 +77,50 @@ export async function login(username, password) {
 }
 
 export async function requestAuthCode(email) {
-  return await baseRequest(
-    "/auth/email/send",
-    "POST",
-    {
+  const API_BASE_URL = getBaseURL();
+
+  const res = await fetch(`${API_BASE_URL}/auth/email/send`, {
+    method: "POST",
+    headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
     },
-    {
-      email: email,
-    },
-    `${email} 이메일 전송 요청 실패`
-  );
+    body: JSON.stringify({ email }),
+    credentials: "include",
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "이메일 전송 요청 실패");
+  }
+
+  return data;
 }
 
 export async function validateAuthCode(email, code) {
-  return await baseRequest(
-    "/auth/email/verify",
-    "POST",
-    {
+  const API_BASE_URL = getBaseURL();
+
+  const res = await fetch(`${API_BASE_URL}/auth/email/verify`, {
+    method: "POST",
+    headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
     },
-    {
+    body: JSON.stringify({
       email: email,
-      code: code,
-    },
-    `${email} 이메일 인증 실패`
-  );
+      authCode: code,
+    }),
+    credentials: "include",
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "인증 코드가 일치하지 않습니다.");
+  }
+
+  return data;
 }
 
 export async function logout() {

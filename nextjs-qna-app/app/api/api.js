@@ -61,7 +61,7 @@ async function refresh() {
 
   if (!res.ok) {
     localStorage.removeItem("refreshToken");
-    window.location.href = "/login";
+    window.location.href = "/auth/login";
     throw new Error("리프레시 토큰이 만료되었습니다.");
   }
 

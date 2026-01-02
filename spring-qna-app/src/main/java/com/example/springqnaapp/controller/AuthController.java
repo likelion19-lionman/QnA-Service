@@ -25,6 +25,7 @@ import com.example.springqnaapp.common.dto.LogoutRequestDto;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -61,17 +62,18 @@ public class AuthController {
 			EmailCodeRequestDto emailCodeRequestDto
 	) {
 		try {
-			return authService.sendAuthCode(emailCodeRequestDto) ?
-			       ResponseEntity.ok("인증코드가 전송되었습니다.") :
-			       ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("인증 코드 전송이 실패하였습니다.");
+            return authService.sendAuthCode(emailCodeRequestDto) ?
+                    ResponseEntity.ok(Map.of("message", "인증코드가 전송되었습니다.")) :
+                    ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(Map.of("message", "인증 코드 전송이 실패하였습니다."));
 		} catch (IllegalArgumentException e) {
 			// 이미 가입된 이메일
-			return ResponseEntity.badRequest()
-			                     .body(e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", e.getMessage()));
 		} catch (MessagingException e) {
 			// 메일 전송 오류
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-			                     .body("이메일 전송 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "이메일 전송 중 오류가 발생했습니다."));
 		}
 	}
 
@@ -88,19 +90,25 @@ public class AuthController {
 	) {
 		try {
 			return authService.validateAuthCode(emailVerifyRequestDto) ?
-			       ResponseEntity.ok("이메일 인증에 성공하였습니다.") :
-			       ResponseEntity.badRequest().body("이메일 인증에 실패하였습니다.");
+			       ResponseEntity.ok(Map.of("message", "이메일 인증에 성공하였습니다.")) :
+			       ResponseEntity.badRequest()
+                           .body(Map.of("message", "이메일 인증에 실패하였습니다."));
 		} catch (IllegalArgumentException e) {
 			// 인증 정보 없음
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", e.getMessage()));
+		} catch (IllegalStateException e) {
+            // 인증시간 만료
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", e.getMessage()));
+        }
 	}
 
 	// 회원가입
 	@PostMapping(
 			value = "/register",
 			consumes = "application/json",
-			produces = "application/json"
+			produces = "text/plain"
 	)
 	public ResponseEntity<?> register(
 			@Valid
