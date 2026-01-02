@@ -14,6 +14,7 @@ export async function baseRequest(
     body,
     errMsg
 ) {
+    console.log(API_BASE_URL);
 
     const fetchOptions = {
         method: method,

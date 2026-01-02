@@ -21,10 +21,10 @@ public class RefreshToken {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "user_id")
+	@Column(name = "user_id", nullable = false, unique = true)
 	private Long userId;
 
-	@Column(name = "value", length = 512)
+	@Column(name = "value", length = 512, nullable = false)
 	private String value;
 
 	public RefreshToken(Long userId, String value) {

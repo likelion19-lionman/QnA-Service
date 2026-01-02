@@ -1,5 +1,6 @@
 package com.example.springqnaapp.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -25,6 +26,7 @@ public class Role {
 	@Enumerated(EnumType.STRING)
 	@Getter
 	@ToString.Include
+	@Column(length = 20, nullable = false, unique = true)
 	private RoleEnum role;
 
     public Role(RoleEnum role) {
