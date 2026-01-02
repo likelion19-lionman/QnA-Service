@@ -20,7 +20,7 @@ export async function baseRequest(
         method: method,
         headers: headers,
         body: JSON.stringify(body),
-        credentials: 'include' // 쿠키에 있는 것까지 전송
+        credentials: 'include'
     };
 
     let res = await fetch(`${API_BASE_URL}${url}`, fetchOptions);

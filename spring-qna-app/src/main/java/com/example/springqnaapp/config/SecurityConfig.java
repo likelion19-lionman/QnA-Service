@@ -3,6 +3,7 @@ package com.example.springqnaapp.config;
 import com.example.springqnaapp.security.CustomAuthenticationEntryPoint;
 import com.example.springqnaapp.security.jwt.JwtAuthenticationFilter;
 import com.example.springqnaapp.security.transform.CookieToAuthHeaderFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -18,13 +19,14 @@ import java.util.List;
 
 @Configuration
 public class SecurityConfig {
-
 	@Bean
 	public SecurityFilterChain securityFilterChain(
 			HttpSecurity http,
 			JwtAuthenticationFilter jwtAuthenticationFilter,
 			CookieToAuthHeaderFilter cookieToAuthHeaderFilter,
-			CustomAuthenticationEntryPoint customAuthenticationEntryPoint
+			CustomAuthenticationEntryPoint customAuthenticationEntryPoint,
+			CorsConfigurationSource corsConfigurationSource
+
 	) {
 		return http
 				.csrf(AbstractHttpConfigurer::disable)
@@ -38,7 +40,7 @@ public class SecurityConfig {
 						.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				)
 				.cors(cors -> cors
-						.configurationSource(corsConfigurationSource())
+						.configurationSource(corsConfigurationSource)
 				)
 				.exceptionHandling(conf -> conf
 						.authenticationEntryPoint(customAuthenticationEntryPoint)
@@ -51,10 +53,13 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public CorsConfigurationSource corsConfigurationSource() {
+	public CorsConfigurationSource corsConfigurationSource(@Value("${app.cors.allowed-origin}") String allowedOrigin) {
 		CorsConfiguration configuration = new CorsConfiguration();
 		configuration.setAllowCredentials(true);
-		configuration.setAllowedOriginPatterns(List.of("http://localhost:3000"));
+		configuration.setAllowedOriginPatterns(List.of(
+				"http://localhost:3000",
+				allowedOrigin
+		));
 		configuration.setAllowedHeaders(List.of("*"));
 		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
