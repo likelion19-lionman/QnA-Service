@@ -31,7 +31,7 @@ jobs:
             cd ~/app
 
             cat <<EOF > .env
-            ${{ secrets.ENV_FILE }}
+            ${{ secrets.ENVFILE }}
             EOF
 
             docker compose down -v
