@@ -1,17 +1,19 @@
-import { baseRequest } from "./api";
+import { baseRequest, getBaseURL } from "./api";
 
 export async function checkDuplication(username) {
-  return await baseRequest(
-    "/auth/check-duplication",
-    "POST",
-    {
+  const API_BASE_URL = getBaseURL();
+
+  const res = await fetch(`${API_BASE_URL}/auth/check-duplication`, {
+    method: "POST",
+    headers: {
       "Content-Type": "text/plain",
       Accept: "application/json",
     },
-    {
-      username: username,
-    }
-  );
+    body: username,
+    credentials: "include",
+  });
+
+  return res.ok;
 }
 
 export async function register(username, email, password) {
