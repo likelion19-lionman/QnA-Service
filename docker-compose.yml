@@ -1,8 +1,5 @@
 services:
   front:
-    build:
-      context: nextjs-qna-app
-      dockerfile: Dockerfile
     image: seonghun120614/qna-next:1.0
     env_file:
       - .env
@@ -10,9 +7,6 @@ services:
       - "3000:3000"
 
   back:
-    build:
-      context: spring-qna-app
-      dockerfile: Dockerfile
     image: seonghun120614/qna-spring:1.0
     env_file:
       - .env
@@ -21,9 +15,6 @@ services:
         condition: service_healthy
 
   db:
-    build:
-      context: mysql-qna-db
-      dockerfile: Dockerfile
     image: seonghun120614/qna-mysql:1.0
     env_file:
       - .env

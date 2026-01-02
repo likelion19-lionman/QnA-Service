@@ -33,4 +33,5 @@ jobs:
             echo "${{ secrets.ENVFILE }}" > .env
 
             docker compose down -v
+            docker compose pull
             docker compose up -d --build
