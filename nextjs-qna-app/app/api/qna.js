@@ -1,4 +1,3 @@
-import { deleteReactDebugChannelForHtmlRequest } from 'next/dist/server/dev/debug-channel';
 import { baseRequest } from './api';
 
 export async function query(title, comment) {

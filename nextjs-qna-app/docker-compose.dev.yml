@@ -6,6 +6,7 @@ services:
     image: qna-next:1.0
     volumes:
       - ./app:/app/app/
+      - ./jsconfig.json:/app/jsconfig.json
       - /app/node_modules
     env_file:
       - .env.dev

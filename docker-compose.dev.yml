@@ -6,9 +6,10 @@ services:
     image: qna-next:1.0
     volumes:
       - ./nextjs-qna-app/app:/app/app/
+      - ./nextjs-qna-app/jsconfig.json:/app/jsconfig.json
       - /app/node_modules
     env_file:
-      - .env.dev
+      - nextjs-qna-app/.env.dev
     ports:
       - "3000:3000"
 
