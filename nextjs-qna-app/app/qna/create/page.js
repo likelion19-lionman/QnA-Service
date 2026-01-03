@@ -30,20 +30,49 @@ export default function CreateQnaPage() {
     };
 
     return (
-        <div>
-            <input
-                placeholder="제목"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-            /><br/>
+        <div className="min-h-screen bg-slate-50 py-8 px-4">
+            <div className="max-w-3xl mx-auto">
+                <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-8 space-y-6">
+                    <div className="space-y-2">
+                        <h1 className="text-3xl font-bold text-slate-800">새 질문 작성</h1>
+                        <p className="text-slate-600 text-sm">질문을 작성해주세요</p>
+                    </div>
+                    
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-slate-700">제목</label>
+                            <input
+                                placeholder="제목을 입력하세요"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                            />
+                        </div>
 
-            <textarea
-            placeholder="댓글을 입력하세요"
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            /><br />
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-slate-700">내용</label>
+                            <textarea
+                                placeholder="내용을 입력하세요"
+                                value={comment}
+                                onChange={(e) => setComment(e.target.value)}
+                                rows={12}
+                                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all resize-none"
+                            />
+                        </div>
 
-            <button type="button" onClick={submit}>게시</button>
+                        <div className="flex gap-3 pt-4">
+                            <button 
+                                type="button" 
+                                onClick={submit}
+                                disabled={submitting}
+                                className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors duration-200 shadow-sm disabled:bg-slate-300 disabled:cursor-not-allowed"
+                            >
+                                {submitting ? '게시 중...' : '게시'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     )
 
