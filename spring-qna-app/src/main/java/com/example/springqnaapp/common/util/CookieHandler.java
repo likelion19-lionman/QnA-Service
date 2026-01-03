@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CookieHandler {
 	private static final boolean XSS_ATTACK_SECURE = true;
-	private static final boolean ONLY_HTTPS = true;
+	private static final boolean ONLY_HTTPS = false;
 	private static final String VALID_PARENT_PATH = "/";
 	private static final int MAX_AGE_SECONDS = 42000;
 
@@ -27,10 +27,11 @@ public class CookieHandler {
 
     public void deleteCookie(HttpServletResponse response, String key){
         Cookie cookie=new Cookie(key,null);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setPath("/");
+        cookie.setHttpOnly(ONLY_HTTPS);
+        cookie.setSecure(XSS_ATTACK_SECURE);
+        cookie.setPath(VALID_PARENT_PATH);
         cookie.setMaxAge(0);
+
         response.addCookie(cookie);
     }
 }
