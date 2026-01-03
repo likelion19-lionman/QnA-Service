@@ -115,6 +115,13 @@ export async function validateAuthCode(email, code) {
     credentials: "include",
   });
 
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(
+      errorData.message || "인증 요청 처리 중 오류가 발생했습니다."
+    );
+  }
+
   const data = await res.json();
 
   if (!data) {
