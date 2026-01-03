@@ -1,13 +1,22 @@
 services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx-qna-proxy/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - front
+      - back
+
   front:
     platform: linux/amd64
     image: seonghun120614/qna-next:1.0
     environment:
       - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
     env_file:
       - .env
-    ports:
-      - "3000:3000"
 
   back:
     platform: linux/amd64
@@ -22,8 +31,6 @@ services:
       - APP_CORS_ALLOWED_ORIGIN=${APP_CORS_ALLOWED_ORIGIN}
     env_file:
       - .env
-    ports:
-      - "8080:8080"
     depends_on:
       db:
         condition: service_healthy
