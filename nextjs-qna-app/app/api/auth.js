@@ -17,7 +17,7 @@ export async function checkDuplication(username) {
   return res.ok;
 }
 
-export async function register(username, email, password) {
+export async function register(username, isEmailVerified, email, password) {
   const API_BASE_URL = getBaseURL();
 
   const res = await fetch(`${API_BASE_URL}/auth/register`, {
@@ -28,6 +28,7 @@ export async function register(username, email, password) {
     },
     body: JSON.stringify({
       username: username,
+      isEmailVerified: isEmailVerified,
       email: email,
       password: password,
     }),
@@ -116,11 +117,11 @@ export async function validateAuthCode(email, code) {
 
   const data = await res.json();
 
-  if (!res.ok) {
-    throw new Error(data.message || "인증 코드가 일치하지 않습니다.");
+  if (!data) {
+    throw new Error("인증 코드가 일치하지 않습니다.");
   }
 
-  return data;
+  return "인증번호가 일치합니다.";
 }
 
 export async function logout() {

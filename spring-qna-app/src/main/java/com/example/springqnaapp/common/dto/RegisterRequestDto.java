@@ -8,6 +8,8 @@ public record RegisterRequestDto(
 		@Size(min = 4, message = "유저이름은 최소 4자 이상입니다.")
 		String username,
 
+		Boolean isEmailVerified,
+
 		@Email(message = "이메일 형태가 올바르지 않습니다.")
 		@Pattern(
 				regexp = "^[A-Za-z0-9._%+-]+@gmail\\.com$",

@@ -30,7 +30,7 @@ export default function RegisterPage() {
     if (password !== confirm) return alert("비밀번호가 일치하지 않습니다.");
 
     try {
-      const res = await register(username, email, password);
+      const res = await register(username, emailVerified, email, password);
 
       if (res) {
         alert("회원가입이 완료되었습니다.");

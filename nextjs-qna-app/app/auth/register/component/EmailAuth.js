@@ -53,9 +53,9 @@ export default function EmailAuth({ email, setEmail, onVerified }) {
   const verifyCode = async () => {
     setMessage("");
     try {
-      await validateAuthCode(email, code);
+      const message = await validateAuthCode(email, code);
       setStatus("verified");
-      setMessage("이메일 인증 완료");
+      setMessage(message);
       onVerified(true);
       setTimeLeft(0);
     } catch (e) {
