@@ -17,3 +17,7 @@ docker buildx build \
     --platform linux/amd64 \
     -t seonghun120614/qna-mysql:1.0 ./mysql-qna-db \
     --push
+
+git add .
+git commit -m "⚙️ 설정: CI/CD 배포"
+git push

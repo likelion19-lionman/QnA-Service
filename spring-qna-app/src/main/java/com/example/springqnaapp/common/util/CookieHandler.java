@@ -17,8 +17,8 @@ public class CookieHandler {
 			String value) {
 		Cookie cookie = new Cookie(key, value);
 
-		cookie.setHttpOnly(ONLY_HTTPS);
-		cookie.setSecure(XSS_ATTACK_SECURE);
+		cookie.setHttpOnly(XSS_ATTACK_SECURE);
+		cookie.setSecure(ONLY_HTTPS);
 		cookie.setPath(VALID_PARENT_PATH);
 		cookie.setMaxAge(MAX_AGE_SECONDS);
 
@@ -27,8 +27,8 @@ public class CookieHandler {
 
     public void deleteCookie(HttpServletResponse response, String key){
         Cookie cookie=new Cookie(key,null);
-        cookie.setHttpOnly(ONLY_HTTPS);
-        cookie.setSecure(XSS_ATTACK_SECURE);
+        cookie.setHttpOnly(XSS_ATTACK_SECURE);
+        cookie.setSecure(ONLY_HTTPS);
         cookie.setPath(VALID_PARENT_PATH);
         cookie.setMaxAge(0);
 
