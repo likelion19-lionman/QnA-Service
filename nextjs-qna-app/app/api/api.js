@@ -1,4 +1,4 @@
-const getBaseURL = () => {
+export const getBaseURL = () => {
   if (typeof window !== "undefined") {
     return `${window.location.protocol}//${window.location.hostname}:8080/api`;
   }
@@ -31,6 +31,12 @@ export async function baseRequest(url, method, headers, body, errMsg) {
 
   // 만약 재발급 후에도 ok 가 아니라면 에러 발생
   if (!res.ok) throw new Error(errMsg || "요청 실패");
+
+  // 204 No Content 응답 처리 (로그아웃 시 사용)
+  if (res.status === 204) {
+    console.log("204 No Content 응답 처리");
+    return null;
+  }
 
   if (headers.Accept && headers.Accept === "text/plain") {
     const text = await res.text();
