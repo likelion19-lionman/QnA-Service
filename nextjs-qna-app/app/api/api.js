@@ -1,11 +1,13 @@
 const getBaseURL = () => {
     if (typeof window !== 'undefined') {
-        return `${window.location.protocol}//${window.location.hostname}:8080/api`;
+        // 클라이언트 사이드
+        return `${window.location.protocol}//${window.location.hostname}/api`;
     }
+    // 서버 사이드
     return 'http://back:8080/api';
 };
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || getBaseURL();
+const API_BASE_URL = getBaseURL();
 
 export async function baseRequest(
     url,
