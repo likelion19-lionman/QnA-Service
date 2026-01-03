@@ -1,6 +1,8 @@
 services:
   nginx:
-    image: nginx:latest
+    platform: linux/amd64
+    image: seonghun120614/qna-nginx:1.0
+    
     ports:
       - "80:80"
     volumes:

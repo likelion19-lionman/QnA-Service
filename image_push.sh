@@ -1,5 +1,10 @@
 docker buildx build \
     --platform linux/amd64 \
+    -t seonghun120614/qna-nginx:1.0 ./nginx-qna-proxy \
+    --push
+
+docker buildx build \
+    --platform linux/amd64 \
     -t seonghun120614/qna-next:1.0 ./nextjs-qna-app \
     --push
 
