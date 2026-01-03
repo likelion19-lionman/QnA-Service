@@ -22,6 +22,8 @@ services:
       - APP_CORS_ALLOWED_ORIGIN=http://${EC2_HOST}:3000
     env_file:
       - .env
+    ports:
+      - "8080:8080"
     depends_on:
       db:
         condition: service_healthy

@@ -5,7 +5,7 @@ const getBaseURL = () => {
     return 'http://back:8080/api';
 };
 
-const API_BASE_URL = getBaseURL();
+const API_BASE_URL = 'http://back:8080/api' || getBaseURL();
 
 export async function baseRequest(
     url,
