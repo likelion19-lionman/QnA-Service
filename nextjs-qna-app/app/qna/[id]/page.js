@@ -1,10 +1,13 @@
 "use client";
 
 import { use, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { retrieveQna } from "@/app/api/qna";
 import CommentForm from "./component/CommentForm";
 
 export default function QnaDetailPage({ params }) {
+  const router = useRouter();
+
   const { id } = use(params);
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,6 +30,14 @@ export default function QnaDetailPage({ params }) {
     }
   };
 
+  const goBack = () => {
+    router.push("/qna");
+  };
+
+  const goHome = () => {
+    router.push("/");
+  };
+
   useEffect(() => {
     console.log(id, "아아");
     if (id) loadQna();
@@ -46,8 +57,8 @@ export default function QnaDetailPage({ params }) {
       {/* 질문 영역 */}
       <h2>질문</h2>
       <div style={{ marginBottom: "20px" }}>
-        <p>{question.comment}</p>
         <small>작성자: {question.username}</small>
+        <p>{question.comment}</p>
       </div>
 
       {/* 답변 영역 */}
@@ -65,6 +76,13 @@ export default function QnaDetailPage({ params }) {
 
       {/* 댓글 작성 */}
       <CommentForm qnaId={id} onSuccess={loadQna} />
+
+      <button type="button" onClick={goBack}>
+        뒤로가기
+      </button>
+      <button type="button" onClick={goHome}>
+        홈으로
+      </button>
     </div>
   );
 }
