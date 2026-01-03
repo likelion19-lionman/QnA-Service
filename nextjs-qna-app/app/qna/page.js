@@ -5,19 +5,14 @@ import { retrieveQnas, deleteQna } from '@/app/api/qna';
 import QnaList from './component/QnaList';
 
 export default function QnaHome() {
-
     const [qnas, setQnas] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     const loadQnas = async () => {
-        console.log("loadqna")
         try {
             setLoading(true);
-            console.log("loadqna2")
-
-            const res = await retrieveQnas(0, 10); // 기본 page=0, size=10
-            console.log(res)
+            const res = await retrieveQnas(0, 10); // page=0, size=10
             setQnas(res.content ?? res);
         } catch (e) {
             setError('질문 목록을 불러오지 못했습니다.');
@@ -28,7 +23,6 @@ export default function QnaHome() {
 
     useEffect(() => {
         loadQnas();
-        console.log("dd")
     }, []);
 
     const handleDelete = async (qnaId) => {
@@ -37,23 +31,46 @@ export default function QnaHome() {
 
         try {
             await deleteQna(qnaId);
-            loadQnas(); // 삭제 후 재조회
+            loadQnas();
         } catch (e) {
             alert('삭제에 실패했습니다.');
         }
     };
 
-    if (loading) return <p>로딩 중...</p>;
-    if (error) return <p>{error}</p>;
+    /* 로딩 상태 */
+    if (loading)
+        return (
+            <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+                <div className="bg-white border border-slate-200 rounded-lg shadow-sm p-6 text-slate-600">
+                    로딩 중...
+                </div>
+            </div>
+        );
+
+    /* 에러 상태 */
+    if (error)
+        return (
+            <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+                <div className="bg-white border border-slate-200 rounded-lg shadow-sm p-6 text-red-600">
+                    {error}
+                </div>
+            </div>
+        );
 
     return (
-        <div>
-            <h1>나의 문의 사항</h1>
+        <div className="min-h-screen bg-slate-50 px-4 py-10">
+            <div className="mx-auto max-w-3xl space-y-6">
+                {/* 페이지 제목 */}
+                <h1 className="text-3xl font-bold text-slate-800">
+                    나의 문의 사항
+                </h1>
 
-            <QnaList
-                qnas={qnas}
-                onDelete={handleDelete}
-            />
+                {/* QnA 리스트 */}
+                <QnaList
+                    qnas={qnas}
+                    onDelete={handleDelete}
+                />
+            </div>
         </div>
     );
 }
