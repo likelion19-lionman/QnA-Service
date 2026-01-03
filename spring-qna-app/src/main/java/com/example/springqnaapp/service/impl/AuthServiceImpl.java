@@ -4,6 +4,8 @@ import com.example.springqnaapp.common.dto.EmailCodeRequestDto;
 import com.example.springqnaapp.common.dto.EmailVerifyRequestDto;
 import com.example.springqnaapp.common.dto.RegisterRequestDto;
 import com.example.springqnaapp.common.dto.TokensDto;
+import com.example.springqnaapp.common.exception.EmailCodeExpiredException;
+import com.example.springqnaapp.common.exception.UserNotFoundException;
 import com.example.springqnaapp.common.util.JwtTokenizer;
 import com.example.springqnaapp.common.util.MailSender;
 import com.example.springqnaapp.domain.*;
@@ -136,26 +138,24 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
 	public boolean validateAuthCode(EmailVerifyRequestDto verifyDto) {
         // 1. 인증 정보 존재 확인
-        EmailAuth auth = emailAuthRepository.findByEmail(verifyDto.email())
-                .orElseThrow(() -> new IllegalArgumentException("인증 요청 내역이 없습니다."));
+        EmailAuth auth = emailAuthRepository
+                .findByEmail(verifyDto.email())
+                .orElseThrow(() -> new UserNotFoundException("인증 요청 내역이 없습니다."));
 
         // 2. 만료 여부 확인
         if (auth.isExpired()) {
             emailAuthRepository.delete(auth);
-            throw new IllegalStateException("인증 시간이 만료되었습니다. 다시 시도해주세요.");
+            throw new EmailCodeExpiredException("인증 시간이 만료되었습니다. 다시 시도해주세요.");
         }
 
-        // 3. 6자리 입력 확인
-        if (verifyDto.authCode().length() != 6) {
-            throw new IllegalArgumentException("인증번호는 6자리입니다.");
-        }
-
-        // 4. 인증번호 일치 여부 확인
+        // 3. 인증번호 일치 여부 확인
         if (!auth.getAuthCode().equals(verifyDto.authCode()))
             return false;
 
-        // 5. 인증 완료 처리
-        return auth.verify();
+        // 4. 인증 완료 처리
+        auth.verify();
+        emailAuthRepository.delete(auth);
+        return true;
 	}
 
 	@Override

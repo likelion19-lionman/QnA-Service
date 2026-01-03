@@ -77,32 +77,19 @@ public class AuthController {
 		}
 	}
 
-	// 인증번호 검증
-	@PostMapping(
-			value = "/email/verify",
-			consumes = "application/json",
-			produces = "application/json"
-	)
-	public ResponseEntity<?> verifyAuthCode(
-			@Valid
-			@RequestBody
-			EmailVerifyRequestDto emailVerifyRequestDto
-	) {
-		try {
-			return authService.validateAuthCode(emailVerifyRequestDto) ?
-			       ResponseEntity.ok(Map.of("message", "이메일 인증에 성공하였습니다.")) :
-			       ResponseEntity.badRequest()
-                           .body(Map.of("message", "이메일 인증에 실패하였습니다."));
-		} catch (IllegalArgumentException e) {
-			// 인증 정보 없음
-            return ResponseEntity.badRequest()
-                    .body(Map.of("message", e.getMessage()));
-		} catch (IllegalStateException e) {
-            // 인증시간 만료
-            return ResponseEntity.badRequest()
-                    .body(Map.of("message", e.getMessage()));
-        }
-	}
+    // 인증번호 검증
+    @PostMapping(
+            value = "/email/verify",
+            consumes = "application/json",
+            produces = "application/json"
+    )
+    public ResponseEntity<Boolean> verifyAuthCode(
+            @Valid
+            @RequestBody
+            EmailVerifyRequestDto emailVerifyRequestDto
+    ) {
+        return ResponseEntity.ok(authService.validateAuthCode(emailVerifyRequestDto));
+    }
 
 	// 회원가입
 	@PostMapping(
