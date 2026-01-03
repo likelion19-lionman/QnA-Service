@@ -1,52 +1,74 @@
-'use client'
+'use client';
 
-import { use } from 'react';
-import CommentForm from '@/app/qna/[id]/component/CommentForm';
+import { useEffect, useState } from 'react';
+import { retrieveQna } from '@/app/api/qna';
+import CommentForm from './component/CommentForm';
 
-export default function QnaPage({ params }) {
-    const { id } = use(params);
+export default function QnaDetailPage({ params }) {
+    const { id } = params;
+    const [comments, setComments] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [forbidden, setForbidden] = useState(false);
+    const [error, setError] = useState(null);
 
-    return <CommentForm qnaId = { id } />;
-    // const {qnaId} = params;
-    // const [qna, setQna] = useState(null);
-    // const [loading, setLoading] = useState(true);
+    const loadQna = async () => {
+        try {
+            setLoading(true);
+            const data = await retrieveQna(id);
+            setComments(data);
+        } catch (e) {
+            if (e?.status === 403) {
+                setForbidden(true);
+            } else {
+                setError('존재하지 않는 질문입니다.');
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
 
-    // useEffect(() => {
-    //     const loadQna = async () => {
-    //         try {
-    //             setLoading(true);
-    //             const data = await retrieveQna(qnaId);
-    //             setQna(data);
-    //         } catch (e) {
-    //             console.error('QnA 로딩 실패:', e);
-    //             alert(e.message || 'QnA를 불러오는데 실패했습니다.');
-    //         } finally {
-    //             setLoading(false);
-    //         }
-    //     };
+    useEffect(() => {
+        console.log(id,"아아")
+        if (id) loadQna();
+    }, [id]);
 
-    //     if (qnaId) {  // qnaId가 있을 때만 호출
-    //         loadQna();
-    //     }
-    // }, [qnaId]);
+    if (loading) return <p>불러오는 중...</p>;
+    if (forbidden) return <p>이 질문을 열람할 권한이 없습니다.</p>;
+    if (error) return <p>{error}</p>;
+    // if (!comments || comments.length === 0)
+    //     return <p>질문 정보가 없습니다.</p>;
 
-    // const hasAnswers = Array.isArray(qna?.comments) && qna.comments.length > 0;
+    /** ✅ 구조 분리 */
+    const question = comments[0];        // 질문
+    const answers = comments.slice(1);   // 답변들
 
-    // if (loading) return <div>읽어오는 중</div>
-    // if (!qna) return <div>존재하지 않은 게시물입니다.</div>
-   
-    // return (
-    //     <div>
-    //         <h1>제목 : {qna.title}</h1>
-    //         <p>내용 : {qna.content}</p>
-    //         <div>작성자 : {qna.username}</div>
+    return (
+        <div>
+            {/* 질문 영역 */}
+            <h2>질문</h2>
+            <div style={{ marginBottom: '20px' }}>
+                <p>{question.comment}</p>
+                <small>작성자: {question.user.username}</small>
+            </div>
 
-    //         {hasAnswers ? <CommentForm comments={qna?.comments}/> :
-    //             <CommentForm
-    //                 qnaId={qnaId} 
-    //                 onSuccess={loadQna}
-    //             />
-    //         }
-    //     </div>
-    // )
+            {/* 답변 영역 */}
+            <h3>답변</h3>
+            {answers.length === 0 && <p>아직 답변이 없습니다.</p>}
+
+            <ul>
+                {answers.map((answer) => (
+                    <li key={answer.id} style={{ marginBottom: '8px' }}>
+                        <p>{answer.comment}</p>
+                        <small>작성자: {answer.user.username}</small>
+                    </li>
+                ))}
+            </ul>
+
+            {/* 댓글 작성 */}
+            <CommentForm
+                qnaId={id}
+                onSuccess={loadQna}
+            />
+        </div>
+    );
 }

@@ -20,10 +20,7 @@ export async function retrieveQnas(page, size) {
     return await baseRequest(
         `/qna?page=${page}&size=${size}`,
         'GET',
-        {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
+        { 'Accept': 'application/json' },
         {},
         `조회 실패`
     )
@@ -31,7 +28,7 @@ export async function retrieveQnas(page, size) {
 
 export async function retrieveQna(qnaId) {
     return await baseRequest(
-        `/qna?id=${qnaId}`,
+        `/qna/${qnaId}`,
         'GET',
         {
             'Content-Type': 'application/json',
@@ -57,13 +54,10 @@ export async function addComment(qnaId, comment) {
 
 export async function deleteQna(qnaId) {
     await baseRequest(
-        `/qna`,
+        `/qna/${qnaId}`,   // ✅
         'DELETE',
-        {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        {},
+        { 'Accept': 'application/json' },
+        null,
         `${qnaId} 삭제에 실패했습니다.`
     )
 }

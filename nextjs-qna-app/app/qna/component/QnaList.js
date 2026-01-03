@@ -1,44 +1,38 @@
-'use client'
+'use client';
 
-export default function Qnas() {
-    return <></>;
-    // const [qnas, setQnas] = useState([]);
-    // const [page, setPage] = useState(0);
+import Link from 'next/link';
 
-    // useEffect(() => {
-    //     (async () => {
-    //         try{
-    //             const data = await retrieveQnas(page, 10);
-    //             setQnas(data)
-    //         }catch(e) {
-    //             alert(e.message)
-    //         }
-    //     })();
-    // }, [page]);
+export default function QnaList({ qnas, onDelete }) {
+    return (
+        <div>
+            <h1>QnA List</h1>
 
-    // return (
-    //     <div>
-    //         <h1>QnA List</h1>
-    //         <ul>
-    //             {qnas.map((qna) => (
-    //                 <li key={qna.id}>
-    //                     <Link href={`/qna/${qna.id}`}>
-    //                         {qna.title}
-    //                     </Link>
-    //                 </li>
-    //             ))}
-    //         </ul>
+            {qnas.length === 0 && <p>질문이 없습니다.</p>}
 
-    //         <button
-    //             type="button"
-    //             onClick={()=>setPage((p) => Math.max(0,p-1))}>
-    //             이전
-    //         </button>
-    //         <button
-    //             type="button"
-    //             onClick={()=>setPage((p) => p+1)}>
-    //             다음
-    //         </button>
-    //     </div>
-    // )
+            <ul>
+                {qnas.map((qna) => (
+                    <li key={qna.id} style={{ marginBottom: '12px' }}>
+                        {/* 카드 클릭 → 상세 */}
+                        <Link href={`/qna/${qna.id}`}>
+                            <strong>{qna.title}</strong>
+                        </Link>
+
+                        <div>
+                            <button
+                                type="button"
+                                onClick={() => onDelete(qna.id)}
+                            >
+                                삭제
+                            </button>
+                        </div>
+                    </li>
+                ))}
+            </ul>
+
+            {/* 문의하기 */}
+            <Link href="/qna/create">
+                <button type="button">문의하기</button>
+            </Link>
+        </div>
+    );
 }
