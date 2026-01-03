@@ -1,51 +1,33 @@
 package com.example.springqnaapp.common.util;
 
+import com.example.springqnaapp.config.properties.JwtProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Set;
 
 @Component
+@RequiredArgsConstructor
+@EnableConfigurationProperties({ JwtProperties.class })
 public class JwtTokenizer {
-	private final byte[] accessToken;
-	private final byte[] refreshToken;
-
-	public final Long accessTokenExpiration;
-	public final Long refreshTokenExpiration;
-
-	public JwtTokenizer(
-			@Value("${jwt.access-secret-key}")
-			final String accessSecret,
-			@Value("${jwt.refresh-secret-key}")
-			final String refreshSecret,
-			@Value("${jwt.access-token-expiration}")
-			final String accessTokenExpiration,
-			@Value("${jwt.refresh-token-expiration}")
-			final String refreshTokenExpiration
-	) {
-		accessToken = accessSecret.getBytes(StandardCharsets.UTF_8);
-		refreshToken = refreshSecret.getBytes(StandardCharsets.UTF_8);
-
-		this.accessTokenExpiration = Long.parseLong(accessTokenExpiration);
-		this.refreshTokenExpiration = Long.parseLong(refreshTokenExpiration);
-	}
+	private final JwtProperties jwtProperties;
 
 	public String createRefreshToken(
 			String username,
 			String email,
 			Set<String> roles
 	) {
-		return createToken(this.refreshTokenExpiration,
+		return createToken(jwtProperties.getRefreshTokenExpiration(),
 		                   username,
 		                   email,
 		                   roles,
-		                   this.refreshToken);
+		                   jwtProperties.getRefreshSecretKey());
 	}
 
 	public String createAccessToken(
@@ -53,11 +35,11 @@ public class JwtTokenizer {
 			String email,
 			Set<String> roles
 	) {
-		return createToken(this.accessTokenExpiration,
+		return createToken(jwtProperties.getAccessTokenExpiration(),
 		                   username,
 		                   email,
 		                   roles,
-		                   this.accessToken);
+		                   jwtProperties.getAccessSecretKey());
 	}
 
 	private String createToken(
@@ -94,10 +76,10 @@ public class JwtTokenizer {
 	}
 
 	public Claims parseAccessToken(String token) {
-		return parseToken(token, accessToken);
+		return parseToken(token, jwtProperties.getAccessSecretKey());
 	}
 
 	public Claims parseRefreshToken(String token) {
-		return parseToken(token, refreshToken);
+		return parseToken(token, jwtProperties.getRefreshSecretKey());
 	}
 }

@@ -16,7 +16,6 @@ export async function baseRequest(
     body,
     errMsg
 ) {
-    console.log(API_BASE_URL);
 
     const fetchOptions = {
         method: method,
@@ -29,10 +28,7 @@ export async function baseRequest(
 
     // 인증 예외 코드 401
     if (res.status === 401) {
-        console.log('액세스 토큰이 만료되어 다시 갱신합니다...');
         await refresh();
-
-        console.log('토큰 갱신 성공. 이전 요청 다시 진행...');
         res = await fetch(`${API_BASE_URL}${url}`, fetchOptions);
     }
 
@@ -42,12 +38,10 @@ export async function baseRequest(
 
     if (headers.Accept && headers.Accept === "text/plain") {
         const text = await res.text();
-        console.log('⭐️ 결과 (text):', text);
         return text;
     }
     
     const data = await res.json();
-    console.log('⭐️ 결과:', data); // 템플릿 리터럴 대신 , 를 써야 객체 내용이 보임
     return data;
 }
 
@@ -59,9 +53,7 @@ async function refresh() {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         },
-        body: JSON.stringify({
-            refreshToken: localStorage.getItem('refreshToken')
-        }),
+        body: localStorage.getItem('refreshToken'),
         credentials: 'include'
     });
 
@@ -73,11 +65,6 @@ async function refresh() {
 
     const data = await res.json();
     
-    // 신규 리프레시 토큰이 내려온다면 갱신
-    if (data && data.refreshToken) {
-        console.log("✅ 갱신 완료")
+    if (data && data.refreshToken)
         localStorage.setItem('refreshToken', data.refreshToken);
-    }
-    
-    return data;
 }

@@ -20,18 +20,17 @@ public class MailSender {
     private String senderEmail;
 
     // 인증번호 생성 및 이메일 발송
-    public String sendMessage(String sendEmail) throws MessagingException {
+    public String sendMessage(String sendEmail) {
         // 랜덤 인증번호 생성
         String authCode = createCode();
 
-        // 메일 생성
-        MimeMessage message = createMail(sendEmail, authCode);
-
         // 이메일 발송
         try {
+            // 메일 생성
+            MimeMessage message = createMail(sendEmail, authCode);
             mailSender.send(message);
             return authCode;
-        } catch (MailException e) {
+        } catch (MailException | MessagingException e) {
             return null;
         }
     }

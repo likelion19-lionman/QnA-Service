@@ -9,7 +9,7 @@ public class CookieHandler {
 	private static final boolean XSS_ATTACK_SECURE = true;
 	private static final boolean ONLY_HTTPS = false;
 	private static final String VALID_PARENT_PATH = "/";
-	private static final int MAX_AGE_SECONDS = 42000;
+	private static final int MAX_AGE_SECONDS = 30 * 60;
 
 	public void createCookie(
 			HttpServletResponse response,
@@ -26,7 +26,8 @@ public class CookieHandler {
 	}
 
     public void deleteCookie(HttpServletResponse response, String key){
-        Cookie cookie=new Cookie(key,null);
+        Cookie cookie = new Cookie(key,null);
+
         cookie.setHttpOnly(XSS_ATTACK_SECURE);
         cookie.setSecure(ONLY_HTTPS);
         cookie.setPath(VALID_PARENT_PATH);

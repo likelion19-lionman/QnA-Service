@@ -1,11 +1,21 @@
 package com.example.springqnaapp.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -19,7 +29,6 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = { "username", "email" })
-@Slf4j
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,8 +47,8 @@ public class User {
             mappedBy = "user",
             fetch = FetchType.LAZY,
             cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
+		            CascadeType.PERSIST,
+		            CascadeType.MERGE
             },
             orphanRemoval = false
     )
@@ -76,26 +85,13 @@ public class User {
         this.roles.add(role);
 	}
 
-    public void addQna(Qna qna) {
-        qnas.add(qna);
-        qna.setUser(this);
-    }
-
 	public boolean hasRole(RoleEnum roleEnum) {
-		log.info("hasRole(RoleEnum roleEnum), {}", roles.stream()
-		                  .anyMatch(role -> role.getRole().equals(roleEnum)));
         return roles.stream()
                 .anyMatch(role -> role.getRole().equals(roleEnum));
 	}
 
 	public boolean hasRole(String role) {
-		log.info("들어온 변수: {}", role);
-		for (Role iter : this.roles)
-			log.info("가지고 있는 role: {}", iter);
-
 		RoleEnum roleEnum = RoleEnum.findByRole(role);
-
-		log.info("찾은 RoleEnum: {}", roleEnum);
 		if (roleEnum != null) return hasRole(roleEnum);
 		return false;
 	}

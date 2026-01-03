@@ -36,10 +36,8 @@ export async function register(
         `회원가입 불가`
     );
 
-    if (res && res.refreshToken) {
-        console.log("✅ 회원가입 완료 및 refreshToken 저장");
+    if (res && res.refreshToken)
         localStorage.setItem('refreshToken', res.refreshToken);
-    }
 }
 
 export async function login(username, password) {
@@ -57,10 +55,8 @@ export async function login(username, password) {
         `${username} 로그인 실패`
     );
 
-    if (res) {
-        console.log("✅ 로그인 완료 및 refreshToken -> LocalStorage 저장");
+    if (res)
         localStorage.setItem('refreshToken', res);
-    }
 }
 
 export async function requestAuthCode(email) {

@@ -1,6 +1,8 @@
 package com.example.springqnaapp.common.dto;
 
+import jakarta.validation.constraints.NotEmpty;
+
 public record TokensDto(
-        String accessToken,
-		String refreshToken
+        @NotEmpty String accessToken,
+        @NotEmpty String refreshToken
 ) { }

@@ -3,20 +3,20 @@ package com.example.springqnaapp.service;
 import com.example.springqnaapp.common.dto.EmailCodeRequestDto;
 import com.example.springqnaapp.common.dto.EmailVerifyRequestDto;
 import com.example.springqnaapp.common.dto.TokensDto;
-import com.example.springqnaapp.domain.User;
 import com.example.springqnaapp.common.dto.RegisterRequestDto;
-import jakarta.mail.MessagingException;
 
 public interface AuthService {
     boolean checkDuplication(String username);
 
-    User register(RegisterRequestDto requestDto);
+    void register(RegisterRequestDto requestDto);
 
-    boolean sendAuthCode(EmailCodeRequestDto requestDto) throws MessagingException;
+    void sendAuthCode(EmailCodeRequestDto requestDto);
 
     boolean validateAuthCode(EmailVerifyRequestDto verifyDto);
 
     TokensDto login(String username, String password);
 
-    void logout(String refreshToken);
+    void logout(String refreshTokenStr);
+
+    String refresh(String refreshTokenStr);
 }

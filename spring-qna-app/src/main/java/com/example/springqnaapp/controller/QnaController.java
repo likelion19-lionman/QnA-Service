@@ -5,18 +5,22 @@ import com.example.springqnaapp.common.dto.QnaRequestDto;
 import com.example.springqnaapp.common.dto.QnaResponseDto;
 import com.example.springqnaapp.service.QnaService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
+import java.util.List;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/qna")
@@ -27,25 +31,18 @@ public class QnaController {
     @PostMapping
     public ResponseEntity<?> query(
             @Valid @RequestBody QnaRequestDto requestDto,
-            Principal principal,
-            BindingResult bindingResult
+            Principal principal
     ) {
-        // 제목 혹은 내용이 비어있을 경우 오류 출력
-        if (bindingResult.hasErrors())
-            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
-
         String username = principal.getName();
         QnaResponseDto responseDto = qnaService.createQna(requestDto, username);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
     @GetMapping
-    public ResponseEntity<?> pagingQna(
+    public ResponseEntity<Page<QnaResponseDto>> pagingQna(
             @RequestParam(defaultValue = "0")
-            @Min(value = 0, message = "페이지는 0 이상 값이어야 합니다.")
             Integer page,
             @RequestParam(defaultValue = "10")
-            @Min(value = 1, message = "사이즈는 1 이상 값이어야 합니다.")
             Integer size,
             Principal principal
     ) {
@@ -55,7 +52,7 @@ public class QnaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> retrieveQna(
+    public ResponseEntity<List<CommentResponseDto>> retrieveQna(
             @PathVariable(value = "id") Long qnaId,
             Principal principal
     ) {
@@ -77,8 +74,10 @@ public class QnaController {
 			@RequestBody String comment,
 			Principal principal
     ) {
+        if (comment == null || comment.trim().isEmpty())
+            throw new IllegalArgumentException("댓글 내용은 필수입니다.");
 		String username = principal.getName();
-		var result = qnaService.addComment(qnaId, comment.replace("\"", ""), username);
+		var result = qnaService.addComment(qnaId, comment, username);
 		return ResponseEntity.ok(CommentResponseDto.from(result));
     }
 
