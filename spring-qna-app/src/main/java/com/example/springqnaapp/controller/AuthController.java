@@ -5,16 +5,11 @@ import com.example.springqnaapp.common.dto.EmailVerifyRequestDto;
 import com.example.springqnaapp.common.dto.LoginRequestDto;
 import com.example.springqnaapp.common.dto.TokensDto;
 import com.example.springqnaapp.common.util.CookieHandler;
-import com.example.springqnaapp.common.util.JwtTokenizer;
 import com.example.springqnaapp.common.dto.RegisterRequestDto;
-import com.example.springqnaapp.repository.RefreshTokenRepository;
 import com.example.springqnaapp.service.AuthService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,17 +17,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.springqnaapp.common.dto.LogoutRequestDto;
 
-import java.util.HashSet;
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
 public class AuthController {
 	private final AuthService authService;
-	private final JwtTokenizer jwtTokenizer;
 	private final CookieHandler cookieHandler;
-	private final RefreshTokenRepository refreshTokenRepository;
 
 	@PostMapping(
 			value = "/check-duplication",
@@ -78,7 +68,7 @@ public class AuthController {
 	@PostMapping(
 			value = "/register",
 			consumes = "application/json",
-			produces = "application/json"
+			produces = "text/plain"
 	)
 	public ResponseEntity<String> register(
 			@Valid
