@@ -115,7 +115,7 @@ export default function EmailAuth({ email, setEmail, onVerified }) {
           인증코드 보내기
         </button>
       </div>
-      {/* {status === "sent" && ( */}
+      {status === "sent" && (
       <div className="space-y-3 pt-2 border-t border-slate-200">
         <div className="flex gap-2 items-center">
           <div className="relative flex-1">
@@ -169,7 +169,7 @@ export default function EmailAuth({ email, setEmail, onVerified }) {
           </div>
         )}
       </div>
-      {/* // )} */}
+      )}
     </div>
   );
 }
