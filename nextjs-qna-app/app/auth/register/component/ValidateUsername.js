@@ -53,7 +53,12 @@ export default function ValidateUsername({ username, setUsername, onChecked }) {
           }}
           readOnly={fixed}
           disabled={fixed}
-          className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+          className={`flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:outline-none transition-all
+    ${
+      fixed
+        ? "bg-gray-200 cursor-not-allowed"
+        : "focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+    }`}
         />
         <button
           type="button"
