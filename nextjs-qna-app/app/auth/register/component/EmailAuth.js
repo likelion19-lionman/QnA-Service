@@ -3,11 +3,11 @@
 import { useMemo, useState, useEffect } from "react";
 import { requestAuthCode, validateAuthCode } from "@/app/api/auth";
 
-const GMAIL_REGEX = /^[A-Za-z0-9._%+-]+@gmail\.com$/;
+const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
 const validate = (email) => {
-  if (!GMAIL_REGEX.test(email)) {
-    return { ok: false, message: "Gmail 계정만 사용할 수 있습니다." };
+  if (!EMAIL_REGEX.test(email)) {
+    return { ok: false, message: "올바른 Email 형식이 아닙니다." };
   }
   return { ok: true, message: "" };
 };

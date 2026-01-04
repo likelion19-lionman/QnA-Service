@@ -7,10 +7,10 @@ import jakarta.validation.constraints.Pattern;
 public record EmailVerifyRequestDto(
         @NotBlank(message = "이메일을 입력해주세요")
         @Email(message = "유효한 이메일 형식이 아닙니다")
-        @Pattern(
-                regexp = "^[A-Za-z0-9._%+-]+@gmail\\.com$",
-                message = "Gmail 계정만 사용할 수 있습니다"
-        )
+	@Pattern(
+		regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
+       		message = "올바른 이메일 형식이 아닙니다."
+	)
         String email,
 
         @NotBlank(message = "인증번호를 입력해주세요")

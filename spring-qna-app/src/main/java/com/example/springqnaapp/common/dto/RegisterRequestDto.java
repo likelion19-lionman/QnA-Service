@@ -12,8 +12,8 @@ public record RegisterRequestDto(
 
 		@Email(message = "이메일 형태가 올바르지 않습니다.")
 		@Pattern(
-				regexp = "^[A-Za-z0-9._%+-]+@gmail\\.com$",
-				message = "gmail 계정만 사용할 수 있습니다."
+				regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
+        		message = "올바른 이메일 형식이 아닙니다."
 		)
 		String email,
 
