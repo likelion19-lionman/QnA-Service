@@ -68,7 +68,8 @@ public class AuthServiceImpl implements AuthService {
 		if (userRepository.existsByEmail(email))
 			throw new UserExistedException("이미 가입된 이메일입니다.");
 
-		EmailAuth emailAuth = emailAuthRepository.findByEmail(email).orElse(null);
+		EmailAuth emailAuth = emailAuthRepository.findByEmail(email)
+		                                         .orElse(null);
 		if (isVerifying(emailAuth))
 			throw new UserExistedException("현재 인증 진행중인 이메일입니다.");
 
@@ -83,9 +84,11 @@ public class AuthServiceImpl implements AuthService {
 		else
 			emailAuth.patch(authCode);
 	}
+
 	private boolean isVerifying(EmailAuth emailAuth) {
 		return emailAuth != null // 이메일이 등록되어 있고,
-		       && LocalDateTime.now().isBefore(emailAuth.getExpireAt()); // 이메일이 아직 만료되지 않았다면
+		       && LocalDateTime.now()
+		                       .isBefore(emailAuth.getExpireAt()); // 이메일이 아직 만료되지 않았다면
 	}
 
 	/**
@@ -112,7 +115,8 @@ public class AuthServiceImpl implements AuthService {
 		}
 
 		// 3. 인증번호 일치 여부 확인
-		if (!auth.getAuthCode().equals(verifyDto.authCode()))
+		if (!auth.getAuthCode()
+		         .equals(verifyDto.authCode()))
 			return false;
 
 		// 4. 인증 완료 처리
@@ -147,7 +151,8 @@ public class AuthServiceImpl implements AuthService {
 			throw new UserExistedException("이미 사용 중인 이메일입니다.");
 
 		if (DEFAULT_ROLE == null)
-			DEFAULT_ROLE = roleRepository.findByRole(RoleEnum.ROLE_USER).get();
+			DEFAULT_ROLE = roleRepository.findByRole(RoleEnum.ROLE_USER)
+			                             .get();
 
 		// 4. 사용자 정보 저장
 		userRepository.save(new User(
@@ -161,7 +166,8 @@ public class AuthServiceImpl implements AuthService {
 	@Override
 	@Transactional
 	public TokensDto login(String username, String password) {
-		User user = userRepository.findByUsername(username).orElse(null);
+		User user = userRepository.findByUsername(username)
+		                          .orElse(null);
 
 		if (user == null || !passwordEncoder.matches(password, user.getPassword()))
 			throw new UserNotFoundException("존재하지 않는 회원입니다.");
@@ -169,8 +175,8 @@ public class AuthServiceImpl implements AuthService {
 		Set<String> roles = user.getStringRoles();
 		String accessToken = jwtTokenizer.createAccessToken(user.getUsername(), user.getEmail(), roles);
 		String refreshToken = refreshTokenRepository.findByUserId(user.getId())
-		                                         .map(RefreshToken::getValue)
-		                                         .orElse(null);
+		                                            .map(RefreshToken::getValue)
+		                                            .orElse(null);
 
 		if (refreshToken == null) {
 			refreshToken = jwtTokenizer.createRefreshToken(user.getUsername(), user.getEmail(), roles);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { checkDuplication } from "@/app/api/auth";
 
 const USERNAME_REGEX = /^[a-zA-Z0-9]{4,}$/;
@@ -14,6 +14,7 @@ const validate = (username) => {
 };
 
 export default function ValidateUsername({ username, setUsername, onChecked }) {
+  const [fixed, setFixed] = useState(false);
   const usernameRule = useMemo(() => validate(username), [username]);
 
   const checkUsername = async () => {
@@ -25,6 +26,7 @@ export default function ValidateUsername({ username, setUsername, onChecked }) {
       if (available) {
         alert("가입 가능한 아이디입니다.");
         onChecked?.(true);
+        setFixed(fixed || true);
       } else {
         alert("이미 존재하는 아이디입니다.");
         onChecked?.(false);
@@ -45,9 +47,12 @@ export default function ValidateUsername({ username, setUsername, onChecked }) {
           placeholder="사용자명을 입력하세요"
           value={username}
           onChange={(e) => {
+            if (fixed) return;
             setUsername(e.target.value);
             onChecked?.(false);
           }}
+          readOnly={fixed}
+          disabled={fixed}
           className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
         />
         <button

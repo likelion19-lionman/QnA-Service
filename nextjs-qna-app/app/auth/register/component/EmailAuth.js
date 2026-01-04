@@ -35,14 +35,19 @@ export default function EmailAuth({ email, setEmail, onVerified }) {
     if (!emailRule.ok) return alert(emailRule.message);
 
     try {
-      await requestAuthCode(email);
-      setStatus("sent");
-      setMessage("인증 코드가 전송되었습니다");
-      setTimeLeft(300); // 5분 (300초)
-      setCode(""); // 코드 초기화
+      const isOk = await requestAuthCode(email);
+
+      if (isOk) {
+        setStatus("sent");
+        setMessage("인증 코드가 전송되었습니다");
+        setTimeLeft(300); // 5분 (300초)
+        setCode(""); // 코드 초기화
+      } else {
+        setStatus("sent"); // 에러가 나도 입력란은 보이도록
+        setMessage("코드 전송이 되지 않았습니다.");
+      }
     } catch (e) {
-      setStatus("sent"); // 에러가 나도 입력란은 보이도록
-      setMessage(e.message);
+      alert(e.message);
     }
   };
 
@@ -52,15 +57,21 @@ export default function EmailAuth({ email, setEmail, onVerified }) {
 
   const verifyCode = async () => {
     setMessage("");
+
     try {
-      const message = await validateAuthCode(email, code);
-      setStatus("verified");
-      setMessage(message);
-      onVerified(true);
-      setTimeLeft(0);
+      const isAuth = await validateAuthCode(email, code);
+
+      if (isAuth) {
+        setStatus("verified");
+        setMessage("이메일 인증 되었습니다.");
+        onVerified(true);
+        setTimeLeft(0);
+      } else {
+        setStatus("sent");
+        setMessage("인증코드가 같지 않습니다.");
+      }
     } catch (e) {
-      setStatus("sent");
-      setMessage(e.message);
+      alert(e.message);
     }
   };
 

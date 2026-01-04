@@ -2,6 +2,7 @@ package com.example.springqnaapp.service.impl;
 
 import com.example.springqnaapp.common.dto.QnaRequestDto;
 import com.example.springqnaapp.common.dto.QnaResponseDto;
+import com.example.springqnaapp.common.exception.QnaNotCommentableException;
 import com.example.springqnaapp.common.exception.QnaNotFoundException;
 import com.example.springqnaapp.common.exception.UnauthorizedException;
 import com.example.springqnaapp.common.exception.UserNotFoundException;
@@ -81,8 +82,11 @@ public class QnaServiceImpl implements QnaService {
 		Qna qna = findQnaOrThrow(qnaId);
 		User curUser = findUserOrThrow(username);
 
+		if (!qna.accessible(curUser.getUsername()))
+			throw new UnauthorizedException("권한이 없습니다.");
+
 		if (!qna.commentable(curUser))
-			throw new UnauthorizedException("질문을 할 수 없습니다. 답변을 받은 후 질문을 다시 해주세요.");
+			throw new QnaNotCommentableException("아직 답변이 달리지 않았습니다.");
 
 		return commentRepository.save(new Comment(comment, curUser, qna));
 	}

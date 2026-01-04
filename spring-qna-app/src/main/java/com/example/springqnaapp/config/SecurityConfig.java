@@ -26,12 +26,11 @@ public class SecurityConfig {
 			CookieToAuthHeaderFilter cookieToAuthHeaderFilter,
 			CustomAuthenticationEntryPoint customAuthenticationEntryPoint,
 			CorsConfigurationSource corsConfigurationSource
-
 	) {
 		return http
 				.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/api/auth/**")
+						.requestMatchers("/api/auth/**", "/error")
 						.permitAll()
 						.anyRequest()
 						.authenticated()
@@ -54,7 +53,7 @@ public class SecurityConfig {
 
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource(
-		@Value("${app.cors.allowed-origins}") List<String> allowedOrigins
+		@Value("${APP_CORS_ALLOWED_ORIGINS}") List<String> allowedOrigins
 	) {
 		CorsConfiguration configuration = new CorsConfiguration();
 		configuration.setAllowCredentials(true);

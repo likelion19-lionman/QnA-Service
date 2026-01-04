@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -6,6 +6,7 @@ import { register } from "@/app/api/auth";
 import EmailAuth from "@/app/auth/register/component/EmailAuth";
 import ValidatePW from "./component/ValidatePW";
 import ValidateUsername from "./component/ValidateUsername";
+
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -17,17 +18,14 @@ export default function RegisterPage() {
   const [emailVerified, setEmailVerified] = useState(false);
 
   const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
+  const [passwordValid, setPasswordValid] = useState(false);
 
   const submit = async (e) => {
     e.preventDefault();
+
     if (!usernameVerified) return alert("아이디 중복확인을 해주세요.");
     if (!emailVerified) return alert("이메일 인증을 완료해주세요.");
-    if (!password || password.trim().length === 0)
-      return alert("비밀번호를 입력해주세요.");
-    if (!confirm || confirm.trim().length === 0)
-      return alert("비밀번호 확인을 입력해주세요.");
-    if (password !== confirm) return alert("비밀번호가 일치하지 않습니다.");
+    if (!passwordValid) return alert("비밀번호를 확인해주세요.");
 
     try {
       const res = await register(username, emailVerified, email, password);
@@ -37,12 +35,8 @@ export default function RegisterPage() {
         router.push("/");
       }
     } catch (e) {
-      alert(e.message || "회원가입에 실패하였습니다.");
+      alert("회원가입에 실패하였습니다.");
     }
-  };
-
-  const goHome = () => {
-    router.push("/");
   };
 
   return (
@@ -70,8 +64,7 @@ export default function RegisterPage() {
             <ValidatePW
               password={password}
               setPassword={setPassword}
-              confirm={confirm}
-              setConfirm={setConfirm}
+              setPasswordValid={setPasswordValid}
             />
 
             <div className="flex justify-between">
@@ -81,7 +74,7 @@ export default function RegisterPage() {
               >
                 회원가입
               </button>
-              <button type="button" onClick={goHome}>
+              <button type="button" onClick={() => router.push("/")}>
                 홈으로
               </button>
             </div>

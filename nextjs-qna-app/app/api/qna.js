@@ -1,17 +1,17 @@
-import { baseRequest } from "./api";
+import { baseRequest } from './api';
 
 export async function query(title, comment) {
   return await baseRequest(
-    "/qna",
-    "POST",
+    '/qna',
+    'POST',
     {
-      "Content-Type": "application/json",
-      Accept: "application/json",
+      'Content-Type': 'application/json',
+      'Accept': "application/json",
     },
-    {
+    JSON.stringify({
       title: title,
       comment: comment,
-    },
+    }),
     `QnA 생성 실패`
   );
 }
@@ -21,7 +21,7 @@ export async function retrieveQnas(page, size) {
     `/qna?page=${page}&size=${size}`,
     "GET",
     { Accept: "application/json" },
-    JSON.stringify({}),
+    null,
     `조회 실패`
   );
 }
@@ -29,12 +29,12 @@ export async function retrieveQnas(page, size) {
 export async function retrieveQna(qnaId) {
   return await baseRequest(
     `/qna/${qnaId}`,
-    "GET",
+    'GET',
     {
-      "Content-Type": "application/json",
-      Accept: "application/json",
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
     },
-    {},
+    null,
     `${qnaId} 게시물 조회 실패`
   );
 }
@@ -42,7 +42,7 @@ export async function retrieveQna(qnaId) {
 export async function addComment(qnaId, comment) {
   return await baseRequest(
     `/qna/${qnaId}`,
-    "POST",
+    'POST',
     {
       "Content-Type": "text/plain",
       Accept: "application/json",
@@ -55,8 +55,8 @@ export async function addComment(qnaId, comment) {
 export async function deleteQna(qnaId) {
   await baseRequest(
     `/qna/${qnaId}`, // ✅
-    "DELETE",
-    { Accept: "application/json" },
+    'DELETE',
+    { Accept: 'application/json' },
     null,
     `${qnaId} 삭제에 실패했습니다.`
   );

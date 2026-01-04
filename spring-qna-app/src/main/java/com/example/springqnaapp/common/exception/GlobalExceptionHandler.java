@@ -2,6 +2,7 @@ package com.example.springqnaapp.common.exception;
 
 import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,17 +15,26 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<?> badRequest(MethodArgumentNotValidException e) {
-		 Map<String, String> errors = new HashMap<>();
-		 e.getBindingResult().getFieldErrors().forEach(error ->
-		     errors.put(error.getField(), error.getDefaultMessage())
-		 );
-		 return ResponseEntity.badRequest().body(errors);
+	// 명확하게 반환 타입을 Map으로 지정하거나, 별도의 에러 DTO를 만드세요.
+	public ResponseEntity<Map<String, String>> badRequest(MethodArgumentNotValidException e) {
+		Map<String, String> errors = new HashMap<>();
+
+		e.getBindingResult().getFieldErrors().forEach(
+				error -> errors.put(error.getField(), error.getDefaultMessage())
+		);
+
+		// 명시적으로 JSON 응답임을 보장
+		return ResponseEntity
+				.badRequest()
+				.contentType(MediaType.APPLICATION_JSON)
+				.body(errors);
 	}
 
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseEntity<?> badRequest(IllegalArgumentException e) {
-		return ResponseEntity.badRequest().body(e.getMessage());
+		return ResponseEntity.badRequest()
+		                     .contentType(MediaType.APPLICATION_JSON)
+				             .body(Map.of("detail", e.getMessage()));
 	}
 
 	@ExceptionHandler({
@@ -91,6 +101,17 @@ public class GlobalExceptionHandler {
 		return ErrorResponse.builder(
 				e,
 				HttpStatus.CONFLICT,
+				e.getMessage()
+		).build();
+	}
+
+	@ExceptionHandler({
+			QnaNotCommentableException.class
+	})
+	public ErrorResponse preconditionFailed(Exception e) {
+		return ErrorResponse.builder(
+				e,
+				HttpStatus.PRECONDITION_FAILED,
 				e.getMessage()
 		).build();
 	}

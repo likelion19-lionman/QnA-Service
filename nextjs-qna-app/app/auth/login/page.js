@@ -11,14 +11,17 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
 
     async function submit(e) {
-        e.preventDefault();  // 수정!
-        console.log("로그인 실행중...");
+        e.preventDefault();
         
         try {
-            const res = await login(username, password);
-            console.log(res);
-            alert('로그인 성공');
-            router.push("/");  // 메인으로 이동
+            const isLogined = await login(username, password);
+
+            if (isLogined) {
+                alert('로그인 성공');
+                router.push("/");  // 메인으로 이동
+            } else {
+                alert('로그인 실패');
+            }
         } catch (e) {
             alert(e.message);
         }

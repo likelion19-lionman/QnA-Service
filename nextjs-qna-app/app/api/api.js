@@ -1,45 +1,53 @@
-export const getBaseURL = () => {
+const getBaseURL = () => {
     if (typeof window !== 'undefined') {
         // 클라이언트 사이드
         return `${window.location.protocol}//${window.location.hostname}/api`;
     }
     // 서버 사이드
-    return 'http://back:8080/api';
+    return 'http://back/api';
 };
 
 const API_BASE_URL = getBaseURL();
 
 export async function baseRequest(url, method, headers, body, errMsg) {
+
     const fetchOptions = {
         method: method,
         headers: headers,
         body: body,
-        credentials: "include", // 쿠키에 있는 것까지 전송
+        credentials: 'include', // 쿠키에 있는 것까지 전송
     };
 
     let res = await fetch(`${API_BASE_URL}${url}`, fetchOptions);
 
     // 인증 예외 코드 401
     if (res.status === 401) {
+        console.log("이거 호출됨");
         await refresh();
         res = await fetch(`${API_BASE_URL}${url}`, fetchOptions);
     }
 
-    // 만약 재발급 후에도 ok 가 아니라면 에러 발생
-    if (!res.ok) throw new Error(errMsg || "요청 실패");
+    if (!res.ok) {
+        const errorData = await res.json();
+        if (errorData.detail)
+            throw new Error(errorData.detail);
+        else {
+            const errorMessage = Object.values(errorData).join(".\n");
+            throw new Error(errorMessage || "유효성 검사에 실패했습니다.");
+        }
+    }
+    
+    // 204 No Content
+    if (res.status === 204)
+        return true
 
-    // 204 No Content 응답 처리 (로그아웃 시 사용)
-    if (res.status === 204) 
-        return null;
-
+    // produces = text/plain 은 따로 처리
     if (headers.Accept && headers.Accept === "text/plain") {
         const text = await res.text();
-        console.log("⭐️ 결과 (text):", text);
         return text;
     }
 
     const data = await res.json();
-    console.log("⭐️ 결과:", data); // 템플릿 리터럴 대신 , 를 써야 객체 내용이 보임
     return data;
 }
 

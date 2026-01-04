@@ -21,13 +21,16 @@ export default function CreateQnaPage() {
         return;
       }
       setSubmitting(true);
-      await query(title, comment);
+      console.log("1");
+      const res = await query(title, comment);
+      console.log("2");
       alert("게시글이 등록되었습니다.");
       setTitle("");
       setComment("");
-      router.push("/qna");
+
+      router.push(`/qna/${res.id}`);
     } catch (e) {
-      alert(e?.message ?? "게시글 등록 실패");
+      alert(e.detail)
     } finally {
       setSubmitting(false);
     }
