@@ -67,14 +67,18 @@ export default function RegisterPage() {
               setPasswordValid={setPasswordValid}
             />
 
-            <div className="flex justify-between">
+            <div className="flex gap-3">
               <button
                 type="submit"
-                className="w-full px-4 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors duration-200 shadow-sm"
+                className="flex-1 px-4 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors duration-200 shadow-sm"
               >
                 회원가입
               </button>
-              <button type="button" onClick={() => router.push("/")}>
+              <button
+                type="button"
+                onClick={() => router.push("/")}
+                className="flex-1 px-4 py-3 bg-slate-200 text-slate-700 rounded-lg font-medium hover:bg-slate-300 transition-colors duration-100 shadow-sm"
+              >
                 홈으로
               </button>
             </div>

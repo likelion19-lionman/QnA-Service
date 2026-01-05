@@ -34,7 +34,7 @@ export default function QnaDetailPage({ params }) {
         if (id) loadQna();
     }, [id]);
 
-    const goBack = () => router.push("/qna");
+    const goQnaList = () => router.push("/qna");
     const goHome = () => router.push("/");
 
     if (loading)
@@ -113,12 +113,12 @@ export default function QnaDetailPage({ params }) {
                 </div>
 
                 {/* 하단 버튼 */}
-                <div className="flex justify-between">
+                <div className="flex gap-3">
                     <button
-                        onClick={goBack}
+                        onClick={goQnaList}
                         className="px-4 py-2 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition"
                     >
-                        뒤로가기
+                        목록으로
                     </button>
 
                     <button
