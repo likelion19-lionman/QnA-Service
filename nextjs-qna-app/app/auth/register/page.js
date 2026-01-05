@@ -6,6 +6,7 @@ import { register } from "@/app/api/auth";
 import EmailAuth from "@/app/auth/register/component/EmailAuth";
 import ValidatePW from "./component/ValidatePW";
 import ValidateUsername from "./component/ValidateUsername";
+import Image from "next/image";
 
 
 export default function RegisterPage() {
@@ -77,9 +78,9 @@ export default function RegisterPage() {
               <button
                 type="button"
                 onClick={() => router.push("/")}
-                className="flex-1 px-4 py-3 bg-slate-200 text-slate-700 rounded-lg font-medium hover:bg-slate-300 transition-colors duration-100 shadow-sm"
+                className="px-4 py-3 bg-slate-100"
               >
-                홈으로
+                <Image src="/icons/home.svg" alt="홈" width={20} height={20} />
               </button>
             </div>
           </form>
