@@ -131,4 +131,19 @@ public class AuthController {
 		cookieHandler.createCookie(response, "accessToken", accessToken);
 		return ResponseEntity.noContent().build();
 	}
+
+    // 인증번호 재전송
+    @PostMapping(
+            value = "/email/resend",
+            consumes = "application/json",
+            produces = "application/json"
+    )
+    public ResponseEntity<Void> resendAuthCode(
+            @Valid
+            @RequestBody
+            EmailCodeRequestDto emailCodeRequestDto
+    ) {
+        authService.resendAuthCode(emailCodeRequestDto);
+        return ResponseEntity.noContent().build();
+    }
 }

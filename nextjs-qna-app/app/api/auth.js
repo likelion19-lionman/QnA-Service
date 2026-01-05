@@ -124,3 +124,18 @@ export async function login(username, password) {
     
     return false;
 }
+
+export async function resendAuthCode(email) {
+    return await baseRequest(
+        '/auth/email/resend',
+        'POST',
+        {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        JSON.stringify({
+            email: email
+        }),
+        '이메일 재전송 실패'
+    );
+}

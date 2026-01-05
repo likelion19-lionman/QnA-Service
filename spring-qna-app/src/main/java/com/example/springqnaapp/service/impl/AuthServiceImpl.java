@@ -82,8 +82,6 @@ public class AuthServiceImpl implements AuthService {
 
 		if (emailAuth == null)
 			emailAuthRepository.save(new EmailAuth(email, authCode));
-		else
-			emailAuth.patch(authCode);
 	}
 
 	private boolean isVerifying(EmailAuth emailAuth) {
@@ -214,4 +212,32 @@ public class AuthServiceImpl implements AuthService {
 				new HashSet<>(rolesList)
 		);
 	}
+
+    /**
+     * 인증번호 재전송<br/>
+     * <br/>
+     * 프로세스:<br/>
+     * 1. 인증번호 저장소에 존재한다면 삭제<br/>
+     * 2. 인증번호 생성 및 메일 전송<br/>
+     * 3. Auth 엔티티에 저장<br/>
+     */
+    @Override
+    @Transactional
+    public void resendAuthCode(EmailCodeRequestDto requestDto) {
+        String email = requestDto.email();
+
+        // 1. 인증번호 저장소에 존재한다면 삭제
+        emailAuthRepository.findByEmail(email)
+                            .ifPresent(emailAuthRepository::delete);
+
+        // 2. 인증번호 생성 및 메일 전송
+        final var authCode = mailSender.sendMessage(email);
+
+        if (authCode == null)
+            throw new ApiServerUnhealthyException("인증 코드 전송이 실패하였습니다.");
+
+        if (!emailAuthRepository.existsByEmail(email))
+            emailAuthRepository.save(new EmailAuth(email, authCode));
+    }
+
 }

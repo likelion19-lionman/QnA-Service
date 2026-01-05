@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface EmailAuthRepository extends JpaRepository<EmailAuth, Long> {
     // 이메일로 인증 정보 조회
     Optional<EmailAuth> findByEmail(String email);
+
+    boolean existsByEmail(String email);
 }
