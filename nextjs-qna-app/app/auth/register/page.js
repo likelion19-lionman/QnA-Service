@@ -6,6 +6,7 @@ import { register } from "@/app/api/auth";
 import EmailAuth from "@/app/auth/register/component/EmailAuth";
 import ValidatePW from "./component/ValidatePW";
 import ValidateUsername from "./component/ValidateUsername";
+import Image from "next/image";
 
 
 export default function RegisterPage() {
@@ -67,15 +68,19 @@ export default function RegisterPage() {
               setPasswordValid={setPasswordValid}
             />
 
-            <div className="flex justify-between">
+            <div className="flex gap-3">
               <button
                 type="submit"
-                className="w-full px-4 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors duration-200 shadow-sm"
+                className="flex-1 px-4 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors duration-200 shadow-sm"
               >
                 회원가입
               </button>
-              <button type="button" onClick={() => router.push("/")}>
-                홈으로
+              <button
+                type="button"
+                onClick={() => router.push("/")}
+                className="px-4 py-3 bg-slate-100"
+              >
+                <Image src="/icons/home.svg" alt="홈" width={20} height={20} />
               </button>
             </div>
           </form>
