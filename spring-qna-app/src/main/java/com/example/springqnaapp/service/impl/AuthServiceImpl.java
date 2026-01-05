@@ -80,8 +80,7 @@ public class AuthServiceImpl implements AuthService {
 		if (authCode == null)
 			throw new ApiServerUnhealthyException("인증 코드 전송이 실패하였습니다.");
 
-		if (emailAuth == null)
-			emailAuthRepository.save(new EmailAuth(email, authCode));
+		emailAuthRepository.save(new EmailAuth(email, authCode));
 	}
 
 	private boolean isVerifying(EmailAuth emailAuth) {
