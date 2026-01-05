@@ -33,6 +33,10 @@ export default function QnaDetailPage({ params }) {
     useEffect(() => {
         if (id) loadQna();
     }, [id]);
+    
+    const addCommentCard = (comment) => {
+        setComments([...comments, comment]);
+    }
 
     const goBack = () => router.push("/qna");
     const goHome = () => router.push("/");
@@ -109,7 +113,7 @@ export default function QnaDetailPage({ params }) {
 
                 {/* 댓글 작성 */}
                 <div className="bg-white border border-slate-200 rounded-lg shadow-sm p-6">
-                    <CommentForm qnaId={id} onSuccess={loadQna} />
+                    <CommentForm qnaId={id} onSuccess={loadQna} addCommentCard={addCommentCard} />
                 </div>
 
                 {/* 하단 버튼 */}

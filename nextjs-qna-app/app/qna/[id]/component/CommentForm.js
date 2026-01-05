@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { addComment } from '@/app/api/qna';
 
-export default function CommentForm({ qnaId }) {
+export default function CommentForm({ qnaId, addCommentCard }) {
     const [comment, setComment] = useState('');
     const [submitting, setSubmitting] = useState(false);
 
@@ -14,7 +14,8 @@ export default function CommentForm({ qnaId }) {
 
         try {
             setSubmitting(true);
-            await addComment(qnaId, trimmed);
+            const comment = await addComment(qnaId, trimmed);
+            addCommentCard(comment);
             setComment('');
         } catch (e) {
             alert('댓글 작성 실패');
