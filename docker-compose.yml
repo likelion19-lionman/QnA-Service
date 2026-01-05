@@ -13,7 +13,6 @@ services:
     image: seonghun120614/qna-next:1.0
     environment:
       - NODE_ENV=production
-      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
     env_file:
       - .env
 

@@ -50,9 +50,8 @@ public class Qna {
         this.title = title;
     }
 
-	public boolean accessible(String username) {
-		return user.hasRole("ROLE_ADMIN")
-		       || user.getUsername().equals(username);
+	public boolean accessible(User user) {
+		return user.hasRole("ROLE_ADMIN") || this.user.getUsername().equals(user.getUsername());
 	}
 
 	public boolean commentable(User curUser) {

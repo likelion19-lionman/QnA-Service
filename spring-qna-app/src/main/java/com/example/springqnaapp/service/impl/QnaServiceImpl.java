@@ -69,8 +69,9 @@ public class QnaServiceImpl implements QnaService {
 	@Transactional(readOnly = true)
 	public List<Comment> retrieveQna(long qnaId, String username) {
 		Qna qna = findQnaOrThrow(qnaId);
+		User user = findUserOrThrow(username);
 
-		if (!qna.accessible(username))
+		if (!qna.accessible(user))
 			throw new UnauthorizedException("열람 권한이 없습니다.");
 
 		return qna.getComments();
@@ -82,7 +83,7 @@ public class QnaServiceImpl implements QnaService {
 		Qna qna = findQnaOrThrow(qnaId);
 		User curUser = findUserOrThrow(username);
 
-		if (!qna.accessible(curUser.getUsername()))
+		if (!qna.accessible(curUser))
 			throw new UnauthorizedException("권한이 없습니다.");
 
 		if (!qna.commentable(curUser))
@@ -95,8 +96,9 @@ public class QnaServiceImpl implements QnaService {
 	@Transactional
 	public void deleteQna(long qnaId, String username) {
 		Qna qna = findQnaOrThrow(qnaId);
+		User user = findUserOrThrow(username);
 
-		if (!qna.accessible(username))
+		if (!qna.accessible(user))
 			throw new UnauthorizedException("삭제 권한이 없습니다.");
 
 		qnaRepository.deleteById(qnaId);

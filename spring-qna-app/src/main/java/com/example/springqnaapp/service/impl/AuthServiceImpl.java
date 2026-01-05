@@ -70,6 +70,7 @@ public class AuthServiceImpl implements AuthService {
 
 		EmailAuth emailAuth = emailAuthRepository.findByEmail(email)
 		                                         .orElse(null);
+
 		if (isVerifying(emailAuth))
 			throw new UserExistedException("현재 인증 진행중인 이메일입니다.");
 
