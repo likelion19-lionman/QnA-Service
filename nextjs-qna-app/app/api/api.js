@@ -55,7 +55,7 @@ async function refresh() {
     const res = await fetch(`${API_BASE_URL}/auth/refresh`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'text/plain',
             'Accept': 'application/json'
         },
         body: localStorage.getItem('refreshToken'),

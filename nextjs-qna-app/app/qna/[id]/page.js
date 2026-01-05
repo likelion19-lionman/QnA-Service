@@ -92,9 +92,9 @@ export default function QnaDetailPage({ params }) {
                     )}
 
                     <ul className="space-y-4">
-                        {answers.map((answer) => (
+                        {answers.map((answer, idx) => (
                             <li
-                                key={answer.id}
+                                key={idx}
                                 className="border border-slate-200 rounded-lg p-4 bg-slate-50"
                             >
                                 <p className="text-slate-700 mb-2">
@@ -103,7 +103,7 @@ export default function QnaDetailPage({ params }) {
                                 <div className="text-sm text-slate-500">
                                     작성자:{" "}
                                     <span className="font-medium">
-                    {answer.user.username}
+                    {answer.username}
                   </span>
                                 </div>
                             </li>
