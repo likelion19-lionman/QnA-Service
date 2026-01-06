@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
 
@@ -43,7 +44,7 @@ public interface QnaController {
 			@ApiResponse(responseCode = "404",
 			             description = "시스템에 등록되지 않은 사용자인 경우",
 			             content = @Content(mediaType = "application/json",
-                                         schema = @Schema(implementation = ErrorResponse.class),
+                                         schema = @Schema(implementation = ProblemDetail.class),
                                          examples = @ExampleObject(
                                                  value = """
 											            {
@@ -58,7 +59,7 @@ public interface QnaController {
 			@ApiResponse(responseCode = "401",
 			             description = "사용자 계정이 아닌 경우",
 			             content = @Content(mediaType = "application/json",
-                                            schema = @Schema(implementation = ErrorResponse.class),
+                                            schema = @Schema(implementation = ProblemDetail.class),
                                             examples = @ExampleObject(
                                                     value = """
 											                {
@@ -100,7 +101,7 @@ public interface QnaController {
 			@ApiResponse(responseCode = "404",
 			             description = "시스템에 등록되지 않은 사용자인 경우",
 			             content = @Content(mediaType = "application/json",
-                                            schema = @Schema(implementation = ErrorResponse.class),
+                                            schema = @Schema(implementation = ProblemDetail.class),
                                             examples = @ExampleObject(
                                                     value = """
                                                             {
@@ -143,7 +144,7 @@ public interface QnaController {
 			@ApiResponse(responseCode = "404",
 			             description = "시스템에 등록되지 않은 사용자이거나 시스템에 등록되지 않은 QnA 글 인 경우",
 			             content = @Content(mediaType = "application/json",
-                                             schema = @Schema(implementation = ErrorResponse.class),
+                                             schema = @Schema(implementation = ProblemDetail.class),
                                              examples = @ExampleObject(
                                                      value = """
                                                              {
@@ -158,7 +159,7 @@ public interface QnaController {
 			@ApiResponse(responseCode = "401",
 			             description = "해당 글을 볼 수 있는 자격이 안되는 경우",
 			             content = @Content(mediaType = "application/json",
-                                             schema = @Schema(implementation = ErrorResponse.class),
+                                             schema = @Schema(implementation = ProblemDetail.class),
                                              examples = @ExampleObject(
                                                         value = """
                                                             {
@@ -188,7 +189,7 @@ public interface QnaController {
 			@ApiResponse(responseCode = "404",
 			             description = "시스템에 등록되지 않은 사용자이거나 시스템에 등록되지 않은 QnA 글 인 경우",
 			             content = @Content(mediaType = "application/json",
-                                             schema = @Schema(implementation = ErrorResponse.class),
+                                             schema = @Schema(implementation = ProblemDetail.class),
                                              examples = @ExampleObject(
                                                      value = """
                                                             {
@@ -203,7 +204,7 @@ public interface QnaController {
 			@ApiResponse(responseCode = "401",
 			             description = "해당 글에 댓글을 남길 자격이 안되는 경우",
 			             content = @Content(mediaType = "application/json",
-                                             schema = @Schema(implementation = ErrorResponse.class),
+                                             schema = @Schema(implementation = ProblemDetail.class),
                                              examples = @ExampleObject(
                                                      value = """
 											                {
@@ -231,7 +232,7 @@ public interface QnaController {
 			@ApiResponse(responseCode = "412",
 			             description = "답변이 달리지 않았는데도 불구하고 작성자가 답변을 연속해서 달 경우",
 			             content = @Content(mediaType = "application/json",
-                                             schema = @Schema(implementation = ErrorResponse.class),
+                                             schema = @Schema(implementation = ProblemDetail.class),
                                              examples = @ExampleObject(
                                                      value = """
 											                {

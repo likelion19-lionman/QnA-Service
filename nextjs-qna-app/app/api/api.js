@@ -7,7 +7,7 @@ const getBaseURL = () => {
     return 'http://back/api';
 };
 
-const API_BASE_URL = getBaseURL();
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || getBaseURL();
 
 export async function baseRequest(url, method, headers, body, errMsg) {
 
