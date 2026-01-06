@@ -3,6 +3,7 @@ package com.example.springqnaapp.controller;
 import com.example.springqnaapp.common.dto.CommentResponseDto;
 import com.example.springqnaapp.common.dto.QnaRequestDto;
 import com.example.springqnaapp.common.dto.QnaResponseDto;
+import com.example.springqnaapp.controller.docs.QnaController;
 import com.example.springqnaapp.service.QnaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,12 +25,13 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/qna")
-public class QnaController {
+public class QnaControllerImpl implements QnaController {
 
     private final QnaService qnaService;
 
+    @Override
     @PostMapping
-    public ResponseEntity<?> query(
+    public ResponseEntity<QnaResponseDto> query(
             @Valid @RequestBody QnaRequestDto requestDto,
             Principal principal
     ) {
@@ -38,6 +40,7 @@ public class QnaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
+    @Override
     @GetMapping
     public ResponseEntity<Page<QnaResponseDto>> pagingQna(
             @RequestParam(defaultValue = "0")
@@ -51,6 +54,7 @@ public class QnaController {
         return ResponseEntity.ok(qnaPage);
     }
 
+    @Override
     @GetMapping("/{id}")
     public ResponseEntity<List<CommentResponseDto>> retrieveQna(
             @PathVariable(value = "id") Long qnaId,
@@ -64,12 +68,13 @@ public class QnaController {
 	    return ResponseEntity.ok(comments);
     }
 
+    @Override
     @PostMapping(
             value = "/{id}",
             consumes = "text/plain",
             produces = "application/json"
     )
-	public ResponseEntity<?> addComment(
+	public ResponseEntity<CommentResponseDto> addComment(
 			@PathVariable(value = "id") Long qnaId,
 			@RequestBody String comment,
 			Principal principal
@@ -82,7 +87,7 @@ public class QnaController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteQna(
+    public ResponseEntity<Void> deleteQna(
             @PathVariable("id") Long qnaId,
             Principal principal
     ) {
