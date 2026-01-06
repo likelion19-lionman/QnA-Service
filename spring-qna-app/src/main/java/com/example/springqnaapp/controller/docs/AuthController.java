@@ -8,6 +8,7 @@ import com.example.springqnaapp.common.dto.RegisterRequestDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -26,9 +27,25 @@ public interface AuthController {
 	)
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "400",
-			             description = "입력된 값들이 유효하지 않은 경우"),
+			             description = "입력된 값들이 유효하지 않은 경우",
+			             content = @Content(mediaType = "application/json",
+			                                schema = @Schema(implementation = Map.class),
+			                                examples = @ExampleObject(
+					                                name = "validation-error",
+					                                value = """
+											                {
+											                    "details": "(에러 메시지)",
+											                }
+											                """
+			                                ))),
 			@ApiResponse(responseCode = "200",
-			             description = "사용 가능한 아이디 혹은 불가한 아이디의 참 거짓 값 반환"),
+			             description = "사용 가능한 아이디 혹은 불가한 아이디의 참 거짓 값 반환",
+			             content = @Content(mediaType = "application/json",
+			                                schema = @Schema(implementation = Boolean.class),
+			                                examples = @ExampleObject(
+					                                name = "중복",
+					                                value = "false"
+			                                ))),
 	})
 	ResponseEntity<Boolean> checkDuplication(
 			@Parameter(description = "사용자 아이디")
@@ -41,11 +58,47 @@ public interface AuthController {
 	)
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "400",
-			             description = "입력된 값들이 유효하지 않은 경우"),
+			             description = "입력된 값들이 유효하지 않은 경우",
+			             content = @Content(mediaType = "application/json",
+			                                schema = @Schema(implementation = Map.class),
+			                                examples = @ExampleObject(
+					                                name = "validation-error",
+					                                value = """
+											                {
+											                    "details": "(에러 메시지)",
+											                }
+											                """
+			                                ))),
 			@ApiResponse(responseCode = "409",
-			             description = "현재 인증 진행중인 이메일이거나 가입된 이메일"),
+			             description = "현재 인증 진행중인 이메일이거나 가입된 이메일",
+			             content = @Content(mediaType = "application/json",
+			                                schema = @Schema(implementation = ErrorResponse.class),
+			                                examples = @ExampleObject(
+					                                value = """
+											                {
+											                    "type": "about:blank",
+											                    "title": "Conflict",
+											                    "status": 409,
+											                    "detail": "이미 인증 진행중인 이메일이거나 가입된 이메일입니다.",
+											                    "instance": "/api/auth/sendAuthCode"
+											                }
+											                """
+			                                ))),
 			@ApiResponse(responseCode = "503",
-			             description = "메일 전송 서버가 통신 불가 상태"),
+			             description = "메일 전송 서버가 통신 불가 상태",
+			             content = @Content(mediaType = "application/json",
+			                                schema = @Schema(implementation = ErrorResponse.class),
+			                                examples = @ExampleObject(
+					                                value = """
+											                {
+											                    "type": "about:blank",
+											                    "title": "Service Unavailable",
+											                    "status": 503,
+											                    "detail": "메일 전송 서버가 통신 불가 상태입니다.",
+											                    "instance": "/api/auth/sendAuthCode"
+											                }
+											                """
+			                                ))),
 			@ApiResponse(responseCode = "204",
 			             description = "전송 완료")
 	})
@@ -59,13 +112,40 @@ public interface AuthController {
 	)
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "400",
-			             description = "입력된 값들이 유효하지 않은 경우"),
+			             description = "입력된 값들이 유효하지 않은 경우",
+			             content = @Content(mediaType = "application/json",
+			                                schema = @Schema(implementation = Map.class),
+			                                examples = @ExampleObject(
+					                                name = "validation-error",
+					                                value = """
+											                {
+											                    "details": "(에러 메시지)",
+											                }
+											                """
+			                                ))),
 			@ApiResponse(responseCode = "200",
-			             description = "이메일 코드 일치 혹은 불일치를 참 거짓 값으로 반환"),
+			             description = "이메일 코드 일치 혹은 불일치를 참 거짓 값으로 반환",
+			             content = @Content(mediaType = "application/json",
+			                                schema = @Schema(implementation = Boolean.class))),
 			@ApiResponse(responseCode = "404",
-			             description = "해당 이메일에 대해 인증코드를 요청한 내역이 없는 경우"),
+			             description = "해당 이메일에 대해 인증코드를 요청한 내역이 없는 경우",
+			             content = @Content(mediaType = "application/json",
+			                                schema = @Schema(implementation = ErrorResponse.class),
+			                                examples = @ExampleObject(
+					                                value = """
+											                {
+											                    "type": "about:blank",
+											                    "title": "Not Found",
+											                    "status": 404,
+											                    "detail": "인증코드를 요청한 내역이 없습니다.",
+											                    "instance": "/api/auth/verifyAuthCode"
+											                }
+											                """
+			                                ))),
 			@ApiResponse(responseCode = "410",
-			             description = "인증 시간이 만료되어 다시 전송해야 하는 경우")
+			             description = "인증 시간이 만료되어 다시 전송해야 하는 경우",
+			             content = @Content(mediaType = "application/json",
+			                                schema = @Schema(implementation = ErrorResponse.class)))
 	})
 	ResponseEntity<Boolean> verifyAuthCode(
 			EmailVerifyRequestDto emailVerifyRequestDto
@@ -79,7 +159,15 @@ public interface AuthController {
 			@ApiResponse(responseCode = "400",
 			             description = "입력된 값들이 유효하지 않은 경우",
 			             content = @Content(mediaType = "application/json",
-			                                schema = @Schema(implementation = Map.class))),
+			                                schema = @Schema(implementation = Map.class),
+			                                examples = @ExampleObject(
+					                                name = "validation-error",
+					                                value = """
+											                {
+											                    "details": "(에러 메시지)",
+											                }
+											                """
+			                                ))),
 			@ApiResponse(responseCode = "409",
 			             description = "이미 있는 사용자인 경우",
 			             content = @Content(mediaType = "application/json",
@@ -110,7 +198,15 @@ public interface AuthController {
 			@ApiResponse(responseCode = "400",
 			             description = "입력된 값들이 유효하지 않은 경우",
 			             content = @Content(mediaType = "application/json",
-			                                schema = @Schema(implementation = Map.class))),
+			                                schema = @Schema(implementation = Map.class),
+			                                examples = @ExampleObject(
+					                                name = "validation-error",
+					                                value = """
+											                {
+											                    "details": "(에러 메시지)",
+											                }
+											                """
+			                                ))),
 			@ApiResponse(responseCode = "200",
 			             description = "쿠키로 액세스 토큰을 받으며, 응답 본문으로 갱신 토큰을 받습니다.",
 			             content = @Content(mediaType = "text/plain",
@@ -133,7 +229,15 @@ public interface AuthController {
 			@ApiResponse(responseCode = "400",
 			             description = "입력된 값들이 유효하지 않은 경우",
 			             content = @Content(mediaType = "application/json",
-			                                schema = @Schema(implementation = Map.class))),
+			                                schema = @Schema(implementation = Map.class),
+			                                examples = @ExampleObject(
+					                                name = "validation-error",
+					                                value = """
+											                {
+											                    "details": "(에러 메시지)",
+											                }
+											                """
+			                                ))),
 			@ApiResponse(responseCode = "204",
 			             description = "토큰이 안전하게 삭제가 된 경우")
 	})
@@ -150,15 +254,38 @@ public interface AuthController {
 			@ApiResponse(responseCode = "400",
 			             description = "입력된 값들이 유효하지 않은 경우",
 			             content = @Content(mediaType = "application/json",
-			                                schema = @Schema(implementation = Map.class))),
+			                                schema = @Schema(implementation = Map.class),
+			                                examples = @ExampleObject(
+					                                name = "validation-error",
+					                                value = """
+											                {
+											                    "details": "(에러 메시지)",
+											                }
+											                """
+			                                ))),
 			@ApiResponse(responseCode = "401",
 			             description = "갱신 토큰이 유효하지 않은 경우",
 			             content = @Content(mediaType = "application/json",
-			                                schema = @Schema(implementation = ErrorResponse.class))),
+			                                schema = @Schema(implementation = ErrorResponse.class),
+			                                examples = @ExampleObject(
+					                                value = """
+											                {
+											                    "type": "about:blank",
+											                    "title": "UNAUTHORIZED",
+											                    "status": 401,
+											                    "detail": "이미 존재하는 사용자입니다",
+											                    "instance": "/api/auth/refresh"
+											                }
+											                """
+			                                ))),
 			@ApiResponse(responseCode = "204",
 			             description = "접근 토큰이 안전하게 갱신된 경우")
 	})
 	ResponseEntity<Void> refresh(
+			@Parameter(
+					description = "갱신 토큰",
+					example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+			)
 			String refreshToken,
 			HttpServletResponse response
 	);
