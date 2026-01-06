@@ -46,6 +46,6 @@ jobs:
             NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
             EOF
 
-            docker compose down -v
+            docker compose down
             docker compose pull
             docker compose up -d
