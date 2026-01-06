@@ -6,6 +6,7 @@ import com.example.springqnaapp.common.dto.QnaResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.security.Principal;
 import java.util.List;
 
 @Tag(name = "QnA", description = "QnA API")
+@SecurityRequirement(name = "JWT_Auth")
 public interface QnaController {
 
 	@Operation(
