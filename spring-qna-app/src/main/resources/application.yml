@@ -2,19 +2,6 @@ spring:
   application:
     name: spring-qna-app
 
-springdoc:
-
-  swagger-ui:
-    # Nginx에서 설정한 하위 경로를 인식하도록 설정
-    path: /swagger-ui.html
-    disable-swagger-default-url: true
-
-  api-docs:
-    path: /v3/api-docs
-
-  # 프록시 서버(Nginx) 뒤에 있음을 명시
-  show-actuator: true
-
 app:
   cors:
     allowed:
