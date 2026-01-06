@@ -37,13 +37,6 @@ public class EmailAuth {
         this.expireAt = LocalDateTime.now().plusMinutes(5);
     }
 
-    // 인증번호 재발급
-    public void patch(String authCode) {
-        this.authCode = authCode;
-        this.verified = false;
-        this.expireAt = LocalDateTime.now().plusMinutes(5);
-    }
-
     // 인증 완료
     public boolean verify() {
         return this.verified = true;

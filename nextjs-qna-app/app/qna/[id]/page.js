@@ -89,15 +89,15 @@ export default function QnaDetailPage({ params }) {
             )}
 
             <ul className="space-y-4">
-              {answers.map((answer) => (
+              {answers.map((answer, idx) => (
                 <li
-                  key={answer.id}
+                  key={idx}
                   className="border border-slate-200 rounded-lg p-4 bg-slate-50"
                 >
                   <p className="text-slate-700 mb-2">{answer.comment}</p>
                   <div className="text-sm text-slate-500">
                     작성자:{" "}
-                    <span className="font-medium">{answer.user.username}</span>
+                    <span className="font-medium">{answer.username}</span>
                   </div>
                 </li>
               ))}
@@ -106,7 +106,7 @@ export default function QnaDetailPage({ params }) {
 
           {/* 댓글 작성 */}
           <div className="bg-white border border-slate-200 rounded-lg shadow-sm p-6">
-            <CommentForm qnaId={id} onSuccess={loadQna} />
+            <CommentForm qnaId={id} onSuccess={loadQna} addCommentCard={addCommentCard} />
           </div>
 
           {/* 하단 버튼 */}

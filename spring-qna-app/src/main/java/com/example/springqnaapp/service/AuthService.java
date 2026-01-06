@@ -19,4 +19,6 @@ public interface AuthService {
     void logout(String refreshTokenStr);
 
     String refresh(String refreshTokenStr);
+
+    void resendAuthCode(EmailCodeRequestDto requestDto);
 }

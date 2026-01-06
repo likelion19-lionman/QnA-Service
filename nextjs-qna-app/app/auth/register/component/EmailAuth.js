@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
-import { requestAuthCode, validateAuthCode } from "@/app/api/auth";
+import { requestAuthCode, resendAuthCode, validateAuthCode } from "@/app/api/auth";
 
 const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
@@ -52,7 +52,23 @@ export default function EmailAuth({ email, setEmail, onVerified }) {
   };
 
   const resendCode = async () => {
-    await sendCode();
+    setMessage("");
+
+    try {
+      const isOk = await resendAuthCode(email);
+
+      if (isOk) {
+        setStatus("sent");
+        setMessage("인증 코드가 재전송되었습니다");
+        setTimeLeft(300); // 5분 (300초)
+        setCode(""); // 코드 초기화
+      } else {
+        setStatus("sent"); // 에러가 나도 입력란은 보이도록
+        setMessage("코드 재전송이 되지 않았습니다.");
+      }
+    } catch (e) {
+      alert(e.message);
+    }
   };
 
   const verifyCode = async () => {
@@ -148,7 +164,6 @@ export default function EmailAuth({ email, setEmail, onVerified }) {
           <button
             type="button"
             onClick={resendCode}
-            disabled={status === "" || status === "verified" || timeLeft > 0}
             className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg font-medium hover:bg-slate-200 transition-colors duration-200 whitespace-nowrap disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed"
           >
             재전송
