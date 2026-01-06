@@ -16,20 +16,24 @@ export default function QnaDetailPage({ params }) {
     const [error, setError] = useState(null);
 
     const loadQna = async () => {
-        try {
-            setLoading(true);
-            const data = await retrieveQna(id);
-            setComments(data);
-        } catch (e) {
-            if (e?.status === 403) {
-                setForbidden(true);
-            } else {
-                setError("존재하지 않는 질문입니다.");
-            }
-        } finally {
-            setLoading(false);
-        }
-    };
+  try {
+    setLoading(true);
+    const data = await retrieveQna(id);
+
+    const list = Array.isArray(data)
+      ? data
+      : Array.isArray(data?.list)
+      ? data.list
+      : [];
+
+    setComments(list.filter(Boolean));
+  } catch (e) {
+    if (e?.status === 403) setForbidden(true);
+    else setError("존재하지 않는 질문입니다.");
+  } finally {
+    setLoading(false);
+  }
+};
 
     useEffect(() => {
         if (id) loadQna();
