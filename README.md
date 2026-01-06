@@ -108,7 +108,7 @@ nginx-qna-proxy/ # Nginx 프록시
 docker compose -f docker-compose.dev.yml up -d
 ```
 
-## 환경 변수 (.env.dev)##
+## 환경 변수 (.env.dev) ##
 ```
 백엔드 (spring-qna-app/.env.dev)
 SPRING_DATASOURCE_URL: MySQL 연결 URL
