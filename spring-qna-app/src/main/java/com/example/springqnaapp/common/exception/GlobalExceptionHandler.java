@@ -16,7 +16,6 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	// 명확하게 반환 타입을 Map으로 지정하거나, 별도의 에러 DTO를 만드세요.
 	public ResponseEntity<Map<String, String>> badRequest(MethodArgumentNotValidException e) {
 		Map<String, String> errors = new HashMap<>();
 

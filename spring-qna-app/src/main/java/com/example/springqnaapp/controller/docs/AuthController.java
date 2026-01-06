@@ -7,13 +7,16 @@ import com.example.springqnaapp.common.dto.LogoutRequestDto;
 import com.example.springqnaapp.common.dto.RegisterRequestDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.ErrorResponse;
+
+import java.util.Map;
 
 @Tag(name = "Auth", description = "사용자 관리 API")
 public interface AuthController {
@@ -74,15 +77,25 @@ public interface AuthController {
 	)
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "400",
-			             description = "입력된 값들이 유효하지 않은 경우"),
+			             description = "입력된 값들이 유효하지 않은 경우",
+			             content = @Content(mediaType = "application/json",
+			                                schema = @Schema(implementation = Map.class))),
 			@ApiResponse(responseCode = "409",
-			             description = "이미 있는 사용자인 경우"),
+			             description = "이미 있는 사용자인 경우",
+			             content = @Content(mediaType = "application/json",
+			                                schema = @Schema(implementation = ErrorResponse.class))),
 			@ApiResponse(responseCode = "403",
-			             description = "이메일 교차 검증이 안된 경우"),
+			             description = "이메일 교차 검증이 안된 경우",
+			             content = @Content(mediaType = "application/json",
+			                                schema = @Schema(implementation = ErrorResponse.class))),
 			@ApiResponse(responseCode = "200",
-			             description = "쿠키로 액세스 토큰을 받으며, 응답 본문으로 갱신 토큰을 받습니다."),
+			             description = "쿠키로 액세스 토큰을 받으며, 응답 본문으로 갱신 토큰을 받습니다.",
+			             content = @Content(mediaType = "text/plain",
+			                                schema = @Schema(implementation = String.class))),
 			@ApiResponse(responseCode = "404",
-			             description = "자동 로그인 도중 회원 가입이 되지 않아 시스템에 해당 아이디가 등록이 안되어 있는 경우")
+			             description = "자동 로그인 도중 회원 가입이 되지 않아 시스템에 해당 아이디가 등록이 안되어 있는 경우",
+			             content = @Content(mediaType = "application/json",
+			                                schema = @Schema(implementation = ErrorResponse.class)))
 	})
 	ResponseEntity<String> register(
 			RegisterRequestDto registerRequestDto,
@@ -95,11 +108,17 @@ public interface AuthController {
 	)
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "400",
-			             description = "입력된 값들이 유효하지 않은 경우"),
+			             description = "입력된 값들이 유효하지 않은 경우",
+			             content = @Content(mediaType = "application/json",
+			                                schema = @Schema(implementation = Map.class))),
 			@ApiResponse(responseCode = "200",
-			             description = "쿠키로 액세스 토큰을 받으며, 응답 본문으로 갱신 토큰을 받습니다."),
+			             description = "쿠키로 액세스 토큰을 받으며, 응답 본문으로 갱신 토큰을 받습니다.",
+			             content = @Content(mediaType = "text/plain",
+			                                schema = @Schema(implementation = String.class))),
 			@ApiResponse(responseCode = "404",
-			             description = "시스템에 해당 아이디가 등록이 안되어 있는 경우")
+			             description = "시스템에 해당 아이디가 등록이 안되어 있는 경우",
+			             content = @Content(mediaType = "application/json",
+			                                schema = @Schema(implementation = ErrorResponse.class)))
 	})
 	ResponseEntity<String> login(
 			LoginRequestDto loginRequestDto,
@@ -112,7 +131,9 @@ public interface AuthController {
 	)
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "400",
-			             description = "입력된 값들이 유효하지 않은 경우"),
+			             description = "입력된 값들이 유효하지 않은 경우",
+			             content = @Content(mediaType = "application/json",
+			                                schema = @Schema(implementation = Map.class))),
 			@ApiResponse(responseCode = "204",
 			             description = "토큰이 안전하게 삭제가 된 경우")
 	})
@@ -127,9 +148,13 @@ public interface AuthController {
 	)
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "400",
-			             description = "입력된 값들이 유효하지 않은 경우"),
+			             description = "입력된 값들이 유효하지 않은 경우",
+			             content = @Content(mediaType = "application/json",
+			                                schema = @Schema(implementation = Map.class))),
 			@ApiResponse(responseCode = "401",
-			             description = "갱신 토큰이 유효하지 않은 경우"),
+			             description = "갱신 토큰이 유효하지 않은 경우",
+			             content = @Content(mediaType = "application/json",
+			                                schema = @Schema(implementation = ErrorResponse.class))),
 			@ApiResponse(responseCode = "204",
 			             description = "접근 토큰이 안전하게 갱신된 경우")
 	})
@@ -144,17 +169,21 @@ public interface AuthController {
 	)
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "400",
-			             description = "입력된 값들이 유효하지 않은 경우"),
+			             description = "입력된 값들이 유효하지 않은 경우",
+			             content = @Content(mediaType = "application/json",
+			                                schema = @Schema(implementation = Map.class))),
 			@ApiResponse(responseCode = "409",
-			             description = "현재 인증 진행중인 이메일이거나 가입된 이메일"),
+			             description = "현재 인증 진행중인 이메일이거나 가입된 이메일",
+			             content = @Content(mediaType = "application/json",
+			                                schema = @Schema(implementation = ErrorResponse.class))),
 			@ApiResponse(responseCode = "503",
-			             description = "메일 전송 서버가 통신 불가 상태"),
+			             description = "메일 전송 서버가 통신 불가 상태",
+			             content = @Content(mediaType = "application/json",
+			                                schema = @Schema(implementation = ErrorResponse.class))),
 			@ApiResponse(responseCode = "204",
 			             description = "전송 완료")
 	})
 	ResponseEntity<Void> resendAuthCode(
-			@Valid
-			@RequestBody
 			EmailCodeRequestDto emailCodeRequestDto
 	);
 }
