@@ -145,7 +145,18 @@ public interface AuthController {
 			@ApiResponse(responseCode = "410",
 			             description = "인증 시간이 만료되어 다시 전송해야 하는 경우",
 			             content = @Content(mediaType = "application/json",
-			                                schema = @Schema(implementation = ErrorResponse.class)))
+                                         schema = @Schema(implementation = ErrorResponse.class),
+                                         examples = @ExampleObject(
+                                                 value = """
+                                                        {
+                                                            "type": "about:blank",
+                                                            "title": "Gone",
+                                                            "status": 410,
+                                                            "detail": "인증코드가 만료되었습니다.",
+                                                            "instance": "/api/auth/verifyAuthCode"
+                                                        }
+                                                        """
+                                         ))),
 	})
 	ResponseEntity<Boolean> verifyAuthCode(
 			EmailVerifyRequestDto emailVerifyRequestDto
@@ -171,11 +182,33 @@ public interface AuthController {
 			@ApiResponse(responseCode = "409",
 			             description = "이미 있는 사용자인 경우",
 			             content = @Content(mediaType = "application/json",
-			                                schema = @Schema(implementation = ErrorResponse.class))),
+			                                schema = @Schema(implementation = ErrorResponse.class),
+                                            examples = @ExampleObject(
+                                                    value = """
+											                {
+											                    "type": "about:blank",
+											                    "title": "Conflict",
+											                    "status": 409,
+											                    "detail": "이미 사용 중인 아이디입니다.",
+											                    "instance": "/api/auth/register"
+											                }
+											                """
+                                            ))),
 			@ApiResponse(responseCode = "403",
 			             description = "이메일 교차 검증이 안된 경우",
 			             content = @Content(mediaType = "application/json",
-			                                schema = @Schema(implementation = ErrorResponse.class))),
+			                                schema = @Schema(implementation = ErrorResponse.class),
+                                            examples = @ExampleObject(
+                                                    value = """
+											                {
+											                    "type": "about:blank",
+											                    "title": "Forbidden",
+											                    "status": 403,
+											                    "detail": "이메일 인증이 완료되지 않았습니다.",
+											                    "instance": "/api/auth/register"
+											                }
+											                """
+                                            ))),
 			@ApiResponse(responseCode = "200",
 			             description = "쿠키로 액세스 토큰을 받으며, 응답 본문으로 갱신 토큰을 받습니다.",
 			             content = @Content(mediaType = "text/plain",
@@ -183,7 +216,18 @@ public interface AuthController {
 			@ApiResponse(responseCode = "404",
 			             description = "자동 로그인 도중 회원 가입이 되지 않아 시스템에 해당 아이디가 등록이 안되어 있는 경우",
 			             content = @Content(mediaType = "application/json",
-			                                schema = @Schema(implementation = ErrorResponse.class)))
+			                                schema = @Schema(implementation = ErrorResponse.class),
+                                            examples = @ExampleObject(
+                                                        value = """
+											                {
+											                    "type": "about:blank",
+											                    "title": "Not Found",
+											                    "status": 404,
+											                    "detail": "아이디를 찾을 수 없습니다.",
+											                    "instance": "/api/auth/register"
+											                }
+											                """
+                                            ))),
 	})
 	ResponseEntity<String> register(
 			RegisterRequestDto registerRequestDto,
@@ -214,7 +258,18 @@ public interface AuthController {
 			@ApiResponse(responseCode = "404",
 			             description = "시스템에 해당 아이디가 등록이 안되어 있는 경우",
 			             content = @Content(mediaType = "application/json",
-			                                schema = @Schema(implementation = ErrorResponse.class)))
+			                                schema = @Schema(implementation = ErrorResponse.class),
+                                            examples = @ExampleObject(
+                                                    value = """
+											                {
+											                    "type": "about:blank",
+											                    "title": "Not Found",
+											                    "status": 404,
+											                    "detail": "존재하지 않는 회원입니다.",
+											                    "instance": "/api/auth/login"
+											                }
+											                """
+                                            ))),
 	})
 	ResponseEntity<String> login(
 			LoginRequestDto loginRequestDto,
@@ -250,6 +305,7 @@ public interface AuthController {
 			summary = "리프레시",
 			description = "자동 토큰 갱신을 위한 API"
 	)
+    
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "400",
 			             description = "입력된 값들이 유효하지 않은 경우",
@@ -273,7 +329,7 @@ public interface AuthController {
 											                    "type": "about:blank",
 											                    "title": "UNAUTHORIZED",
 											                    "status": 401,
-											                    "detail": "이미 존재하는 사용자입니다",
+											                    "detail": "토큰이 유효하지 않습니다.",
 											                    "instance": "/api/auth/refresh"
 											                }
 											                """
@@ -298,15 +354,46 @@ public interface AuthController {
 			@ApiResponse(responseCode = "400",
 			             description = "입력된 값들이 유효하지 않은 경우",
 			             content = @Content(mediaType = "application/json",
-			                                schema = @Schema(implementation = Map.class))),
+			                                schema = @Schema(implementation = Map.class),
+                                            examples = @ExampleObject(
+                                                    name = "validation-error",
+                                                    value = """
+											                {
+											                    "details": "(에러 메시지)",
+											                }
+											                """
+
+                                            ))),
 			@ApiResponse(responseCode = "409",
 			             description = "현재 인증 진행중인 이메일이거나 가입된 이메일",
 			             content = @Content(mediaType = "application/json",
-			                                schema = @Schema(implementation = ErrorResponse.class))),
+			                                schema = @Schema(implementation = ErrorResponse.class),
+                                            examples = @ExampleObject(
+                                                value = """
+											                {
+											                    "type": "about:blank",
+											                    "title": "Conflict",
+											                    "status": 409,
+											                    "detail": "이미 인증 진행중인 이메일이거나 가입된 이메일입니다.",
+											                    "instance": "/api/auth/email/resendAuthCode"
+											                }
+											                """
+                                            ))),
 			@ApiResponse(responseCode = "503",
 			             description = "메일 전송 서버가 통신 불가 상태",
 			             content = @Content(mediaType = "application/json",
-			                                schema = @Schema(implementation = ErrorResponse.class))),
+			                                schema = @Schema(implementation = ErrorResponse.class),
+                                            examples = @ExampleObject(
+                                                value = """
+											                {
+											                    "type": "about:blank",
+											                    "title": "Service Unavailable",
+											                    "status": 503,
+											                    "detail": "메일 전송 서버가 통신 불가 상태입니다.",
+											                    "instance": "/api/auth/email/resendAuthCode"
+											                }
+											                """
+                                            ))),
 			@ApiResponse(responseCode = "204",
 			             description = "전송 완료")
 	})
