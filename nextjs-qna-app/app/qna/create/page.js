@@ -21,9 +21,8 @@ export default function CreateQnaPage() {
         return;
       }
       setSubmitting(true);
-      console.log("1");
       const res = await query(title, comment);
-      console.log("2");
+      localStorage.setItem('title', title)
       alert("게시글이 등록되었습니다.");
       setTitle("");
       setComment("");

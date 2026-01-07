@@ -80,6 +80,7 @@ export default function EmailAuth({ email, setEmail, onVerified }) {
       if (isAuth) {
         setStatus("verified");
         setMessage("이메일 인증 되었습니다.");
+        alert("인증이 완료되었습니다.")
         onVerified(true);
         setTimeLeft(0);
       } else {

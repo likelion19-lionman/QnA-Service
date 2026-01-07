@@ -42,6 +42,7 @@ export default function QnaList({ qnas, onDelete }) {
                 <Link
                   href={`/qna/${qna.id}`}
                   className="text-lg font-medium text-slate-800 hover:underline"
+                  onClick={() => localStorage.setItem('title', qna.title)}
                 >
                   {qna.title}
                 </Link>

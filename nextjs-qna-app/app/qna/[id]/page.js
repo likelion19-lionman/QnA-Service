@@ -74,7 +74,7 @@ export default function QnaDetailPage({ params }) {
         <div className="mx-auto max-w-3xl space-y-6">
           {/* 질문 카드 */}
           <div className="bg-white border border-slate-200 rounded-lg shadow-sm p-6 space-y-4">
-            <h2 className="text-2xl font-bold text-slate-800">질문</h2>
+            <h2 className="text-2xl font-bold text-slate-800">{localStorage.getItem('title') || '질문'} </h2>
 
 
             <div className="text-sm text-slate-500">

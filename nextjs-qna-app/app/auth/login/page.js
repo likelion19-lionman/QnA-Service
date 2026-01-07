@@ -1,5 +1,6 @@
 'use client'
 
+import Image from "next/image";
 import { useState } from "react";
 import { login } from "@/app/api/auth";
 import { useRouter } from "next/navigation";
@@ -72,6 +73,7 @@ export default function LoginPage() {
                         >
                             회원가입
                         </button>
+                            
                     </div>
                 </div>
             </div>
